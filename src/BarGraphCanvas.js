@@ -7,13 +7,19 @@ function PieChartCanvas(props)
 
     const draw = ctx => {
         
-        var dimx=500;
-        var dimy=250;
-        var textDim=30;
-        var barWidth=dimx/(props.fieldsObejct.length*2+2);
-
+        var dimx=props.canvasSizeX;
+        var dimy=props.canvasSizeY;
+        var barGraphSizeX=dimx*0.7;
+        var barGraphSizeY=dimy*0.7;
+        var paddingX=(dimx-barGraphSizeX)/2;
+        var paddingY=(dimy-barGraphSizeY)/2;
+        var barWidth=barGraphSizeX/(props.fieldsObejct.length*2+1);
         var maxValue=0;
-        //var minValue=0;//add custom scaling
+        var minValue=0;
+        var cubeSize=10;
+        var cubeJump=30;
+        
+        
         if (!props.boolComposedValues){
         props.fieldsObejct.forEach(element => {
             maxValue=Math.max(maxValue,element.barGraphValue);
@@ -27,68 +33,78 @@ function PieChartCanvas(props)
                 });
             });
         }
+
+        if (props.customMin!==null)
+            minValue=props.customMin;
+        if (props.customMax!==null)
+            maxValue=props.customMax;
         
-        var numbersOfScale=Math.floor(Math.log10(maxValue/2.5));
+        var range=maxValue-minValue;
+        var numbersOfScale=Math.floor(Math.log10(range/2.5));
         
         var rounding;
-        if(maxValue<40)
+        if(range<40)
             rounding=1;
-        else if(maxValue<250)
+        else if(range<250)
             rounding=5;
         else
             rounding=10**(numbersOfScale-1);
-        maxValue=Math.ceil(maxValue/rounding/5)*rounding*5;
+            range=Math.ceil(range/rounding/5)*rounding*5;
         
         var scales=5;
-        var scale=Math.floor(Math.floor(maxValue/scales)/rounding)*rounding;
-        ctx.fillStyle = "#ffffff";
-        ctx.fillRect(0,0,dimx+100,dimy);
-
-        ctx.fillStyle = "#000000";
-
+        var scale=Math.floor(Math.floor(range/scales)/rounding)*rounding;
         
-        for(var i=0;i<=scales+1;i++)
+        ctx.fillStyle = props.canvasColor;
+        ctx.fillRect(0, 0, dimx, dimy);
+
+        ctx.fillStyle =  props.fieldTextTitle.fieldTextColor;
+        ctx.font = props.fieldTextTitle.fieldTextSize+"px "+ props.fieldTextTitle.fieldTextFont;
+        ctx.fillText(props.title, paddingX + (barGraphSizeX-ctx.measureText(props.title).width)/2, props.fieldTextTitle.fieldTextSize);
+
+        ctx.fillStyle = props.fieldTextValue.fieldTextColor;
+        ctx.font = props.fieldTextValue.fieldTextSize+ "px "+ props.fieldTextValue.fieldTextFont;
+        ctx.strokeStyle = props.line.color;
+        ctx.lineWidth = props.line.size;
+        for(var i=0;i<=scales;i++)
             {
-                ctx.font = "10px Arial";
-                ctx.fillText(scale*i, 0, dimy-textDim-(dimy-textDim)*i*scale/maxValue+9);
+                
+                ctx.fillText(minValue+scale*i, (paddingX - ctx.measureText(minValue+scale*i).width)/2, paddingY + barGraphSizeY-(barGraphSizeY)*i*scale/range);
                 if(props.boolShowLines)
                 {
+                    
                     ctx.beginPath();
-                    ctx.moveTo(0, dimy-textDim-(dimy-textDim)*i*scale/maxValue+1);
-                    ctx.lineTo(dimx, dimy-textDim-(dimy-textDim)*i*scale/maxValue+1);
+                    ctx.moveTo(paddingX, paddingY + barGraphSizeY-(barGraphSizeY)*i*scale/range);
+                    ctx.lineTo(paddingX + barGraphSizeX, paddingY + barGraphSizeY-(barGraphSizeY)*i*scale/range);
                     ctx.stroke();
                 }
             }
+
+
             if(!props.boolComposedValues)
-        props.fieldsObejct.forEach(element => {
-            
-            let startingX=barWidth*(2*element.index);
+         props.fieldsObejct.forEach(element => {
+            console.log(barWidth)
+            let startingX=paddingX+barWidth*(2*element.index-1);
             let lenghtX=barWidth;
-            let lenghtY=element.barGraphValue/maxValue*(dimy-textDim);
-            let startingY= dimy-textDim-lenghtY;
-
-            
-            
-            ctx.fillStyle = element.barGraphColor;
-            ctx.fillRect(startingX,startingY,lenghtX,lenghtY);
-
-            if(element.barGraphName.length<12)
-            {
-            ctx.font = Math.max((30-element.barGraphName.length*2),12)+"px Arial";
-            ctx.fillText(element.barGraphName, startingX , dimy-5);
-            }
+            let lenghtY=(element.barGraphValue-minValue)/range*(barGraphSizeY);
+            let startingY= paddingY + barGraphSizeY - lenghtY;
+            if(props.boolCustomColors)
+                {ctx.fillStyle = element.barGraphCustomColor;
+                    console.log(element.barGraphCustomColor)
+                }
             else
-            {
-                ctx.font = "12px Arial";
-                ctx.fillText(element.barGraphName.substring(0,11), startingX , dimy-11);
-                ctx.fillText(element.barGraphName.substring(11,element.barGraphName.length), startingX , dimy-1);
-            }
+                ctx.fillStyle = element.barGraphColor;
+            ctx.fillRect(startingX,startingY,lenghtX,lenghtY);
+            
+            ctx.font = props.fieldText.fieldTextSize +"px "+  props.fieldText.fieldTextFont;
+            if(!props.boolSameColorForName)
+            ctx.fillStyle = props.fieldText.fieldTextColor;
+            ctx.fillText(element.barGraphName, startingX + (barWidth-ctx.measureText(element.barGraphName).width)/2 , paddingY + barGraphSizeY+ Number(props.fieldText.fieldTextSize) + 5);
 
             if(props.boolDisplayValueOnBar)
             {
-                ctx.fillStyle = "#000000";
-                ctx.font = Math.max((30-element.barGraphName.length*2),12);
-                ctx.fillText(element.barGraphValue, startingX , startingY+lenghtY/2+5);
+                ctx.fillStyle = props.fieldTextValueOnBar.fieldTextColor;
+                ctx.font = props.fieldTextValueOnBar.fieldTextSize + "px " + props.fieldTextValueOnBar.fieldTextFont;
+                ctx.fillText(element.barGraphValue, startingX + (barWidth-ctx.measureText(element.barGraphValue).width)/2 , startingY+(lenghtY+Number(props.fieldTextValueOnBar.fieldTextSize))/2);
             }
             
         }
@@ -99,48 +115,48 @@ function PieChartCanvas(props)
         {
             props.fieldsObejct.forEach(element => {
             
-                
+                ctx.font = props.fieldText.fieldTextSize +"px "+  props.fieldText.fieldTextFont;
+                ctx.fillStyle = props.fieldText.fieldTextColor;
+                ctx.fillText(element.barGraphName, paddingX+ barWidth*(2*element.index-1) + (barWidth-ctx.measureText(element.barGraphName).width)/2 , paddingY + barGraphSizeY+ Number(props.fieldText.fieldTextSize) + 5);
+
                 let lenghtX=barWidth/props.composed.length;
                 props.composed.forEach((element2,index) => {
-                let startingX=barWidth*(2*element.index)+lenghtX*index;
-                let lenghtY=element.barGraphArray[index]/maxValue*(dimy-textDim);
-                let startingY= dimy-textDim-lenghtY;
+                let startingX=paddingX+ barWidth*(2*element.index-1)+lenghtX*index;
+                let lenghtY=(element.barGraphArray[index]-minValue)/range*(barGraphSizeY);
+                let startingY= paddingY + barGraphSizeY-lenghtY;
  
-                
+                if(props.boolCustomColors)
+                ctx.fillStyle = element2.composedCustomColor;
+                else
                 ctx.fillStyle = element2.composedColor;
+
                 ctx.fillRect(startingX,startingY,lenghtX,lenghtY);
 
-                if(index===0)
-                {
-                    ctx.fillStyle = "#000000";
-                    if(element.barGraphName.length<12)
-            {
-            ctx.font = Math.max((30-element.barGraphName.length*2),12)+"px Arial";
-            ctx.fillText(element.barGraphName, startingX , dimy-5);
-            }
-            else
-            {
-                ctx.font = "12px Arial";
-                ctx.fillText(element.barGraphName.substring(0,11), startingX , dimy-11);
-                ctx.fillText(element.barGraphName.substring(11,element.barGraphName.length), startingX , dimy-1);
-            }
-                }
+               
                 })
             })
 
             props.composed.forEach(element => {
-                ctx.font = "12px Arial";
+                ctx.font = props.fieldTextComposed.fieldTextSize + "px "+ props.fieldTextComposed.fieldTextFont;
+                ctx.fillStyle = props.fieldTextComposed.fieldTextColor;
+                ctx.fillText(element.composedName, paddingX + barGraphSizeX + cubeSize + 3,paddingY+ (element.index-1)*cubeJump );
+
+                if(props.boolCustomColors)
+                {
+                    ctx.fillStyle = element.composedCustomColor;
+                    console.log("esti bine");
+                }
+                else
                 ctx.fillStyle = element.composedColor;
-                ctx.fillText(element.composedName, 510 , element.index*30);
-                var cubeX=500;
-                var cubeY=element.index*30-10;
-                ctx.fillRect(cubeX,cubeY,10,10);
+
+                var cubeX= paddingX + barGraphSizeX;
+                var cubeY=paddingY + (element.index-1)*cubeJump-cubeSize;
+                ctx.fillRect(cubeX,cubeY,cubeSize,cubeSize);
             })
         }
-        
-        
 
     }
+    
       useEffect(() => {
         
         const canvas = myCanvas.current
@@ -152,7 +168,7 @@ function PieChartCanvas(props)
 
 
     return (
-        <canvas height={"250px"} width={"600px"} ref= {myCanvas}></canvas>
+        <canvas height={props.canvasSizeY} width={props.canvasSizeX} ref= {myCanvas}></canvas>
     )
 }
 
