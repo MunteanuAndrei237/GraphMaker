@@ -1,0 +1,100 @@
+:root{
+    --chartFormSize : 36;
+    --itemColor:rgb(255, 222, 227);
+    --pieChartContainerColor:rgba(239, 239, 239);
+    --pieChartCanvasContainerColor:white;
+    --containerGradient1:pink;
+    --containerGradient2:magenta;
+}
+
+.tableItem{
+    display: grid !important;
+    justify-items: center;
+    align-items: center;
+    grid-template-columns: repeat(calc(var(--chartFormSize)/9), 9vw);
+    background-color: var(--itemColor);
+  }
+  .tableHeader{
+    display: grid;
+    justify-items: center;
+    align-items: center;
+    grid-template-columns: repeat( calc(var(--chartFormSize)/9), 9vw);
+    margin-top: 1%;
+    margin-bottom: 1%;
+  }
+  .myInput
+  {
+    margin:0.3vh;
+    width:7vw;
+  }
+  .chartForm
+  {
+    padding: 1%;
+    width: var(--chartFormSize)*vw !important;
+  }
+  .optionsFlex{
+    display: grid;
+    grid-template-columns: repeat(2, 50%);
+    gap: 1%;
+    width: 100%;
+  }
+  .optionsContainer{
+    display: grid;
+    width: 100%;
+  }
+
+  .customColorsAndCreate{
+    margin-top:1vh;
+    width:90%;
+    display:flex;
+    justify-content: space-between;
+  }
+  .canvasOption{
+    margin-top:3% !important; 
+    display: block !important;
+  }
+  .pieChartTitle{
+    width: 50%;
+  }
+  .textOptions{
+    display:grid;
+    grid-template-columns: repeat(5,18%);
+    gap: 1%;
+    align-items: center;
+  }
+  
+  .pieChartContainer{
+    display: grid;
+    grid-template-columns: repeat(2, 50%);
+    justify-content: space-between;
+    border: 1rem solid #aaaaff;
+    border-image: repeating-linear-gradient(45deg, transparent, transparent 5px, #aaaaff 6px, #aaaaff 15px, transparent 16px, transparent 20px) 20/1rem;
+    background: var(--pieChartContainerColor);
+    height: 96vh;
+    overflow: auto;
+  }
+
+  .fieldsContainer{
+    margin-top: 2%;
+  }
+  
+  .pieChartCanvasContainer{
+  height: 90%;
+  display:grid;
+  align-items: center;
+  justify-items: center;
+  margin:5%;
+  background-color: var(--pieChartCanvasContainerColor);
+  border:5px solid;
+  border-image: linear-gradient(45deg, var(--containerGradient1),var(--containerGradient2)) 1;
+  }
+  
+  .spacer{
+    height: 1vh;
+  }
+  .checkBoxControlLabel{
+    display:block !important;
+  }
+  .itemAndSpacer{
+    display: inline-block;
+  }

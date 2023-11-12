@@ -1,10 +1,11 @@
 import './App.css';
 import GraphsContainer from './GraphsContainer';
+import StartPage from './StartPage';
 
 function App() {
   return (
     <div className="App">
-      <GraphsContainer />
+      <StartPage />
     </div>
   );
 }

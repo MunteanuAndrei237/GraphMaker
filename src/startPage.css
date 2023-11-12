@@ -1,0 +1,18 @@
+#mainsquare {
+    width: 40%;
+    height: 40%;
+    border: 1px solid black;
+    left: 25%;
+    top: 20%;
+    background-color:rgba(239, 239, 239, 0.9);
+    position: absolute;
+    z-index: 1;
+    padding: 5%;
+    display: grid;
+    border: 1rem solid #aaaaff;
+    border-image: repeating-linear-gradient(45deg, transparent, transparent 5px, #aaaaff 6px, #aaaaff 15px, transparent 16px, transparent 20px) 20/1rem;
+}
+#mainPage{
+    width: 100vw;
+    height:100vh;
+}
