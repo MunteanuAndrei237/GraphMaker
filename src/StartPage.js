@@ -1,5 +1,4 @@
 import { Select,MenuItem,Button,InputLabel,FormControl  } from '@mui/material';
-import myTheme from './myTheme.js';
 import GraphsContainer from './GraphsContainer.js';
 import { useState } from 'react';
 import './startPage.css';
@@ -13,7 +12,7 @@ function StartPage()
     console.log(graphsArray)
     return (
         <div id="wholePage">
-            <div id="mainPage">
+        <div id="mainPage">
         <div id="mainsquare">
             <h1>Create your own graph in seconds</h1>
             <p>Choose between different type of graphs and customize them how you want.Choose between different type of graphs and customize them how you want.Choose between different type of graphs and customize them how you want.</p>
@@ -21,7 +20,7 @@ function StartPage()
             <h3>Get started:</h3>
         <FormControl >
         <InputLabel >Select graph type</InputLabel>
-            <Select  ref={selectRef} value={graphType} onChange={e=>{setgraphType(e.target.value)}}>
+            <Select  ref={selectRef} value={graphType} onChange={e=>{setgraphType(e.target.value)}} label="Select graph type">
             
         <MenuItem value="pieChart">Pie Chart</MenuItem>
         <MenuItem value="barGraph">Bar Graph</MenuItem>

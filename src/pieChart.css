@@ -42,13 +42,16 @@
     display: grid;
     width: 100%;
   }
-
+  .customColorsAndCreateContainer{
+    width: calc(var(--chartFormSize) * 1vw) !important;
+    display: inline-block;
+  }
   .customColorsAndCreate{
     margin-top:1vh;
-    width:90%;
     display:flex;
     justify-content: space-between;
   }
+ 
   .canvasOption{
     margin-top:3% !important; 
     display: block !important;
@@ -87,6 +90,7 @@
   background-color: var(--pieChartCanvasContainerColor);
   border:5px solid;
   border-image: linear-gradient(45deg, var(--containerGradient1),var(--containerGradient2)) 1;
+  grid-template-rows: 90% 10%;
   }
   
   .spacer{
@@ -98,3 +102,7 @@
   .itemAndSpacer{
     display: inline-block;
   }
+.tileAndPalette{
+  display: flex;
+  justify-content: space-between;
+}

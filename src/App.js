@@ -1,5 +1,4 @@
 import './App.css';
-import GraphsContainer from './GraphsContainer';
 import StartPage from './StartPage';
 
 function App() {

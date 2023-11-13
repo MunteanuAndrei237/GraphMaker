@@ -1,20 +1,20 @@
-import { useRef, useEffect } from "react";
+import { useEffect,forwardRef } from "react";
 
 function turnValuetoArc(v, vt) {
   return (v / vt) * 2 * Math.PI;
 }
 
-
-
-function PieChartCanvas(props) {
-  var myCanvas = useRef(null);
+const PieChartCanvas =forwardRef((props, ref) => {
+  var legendXSize;
+  props.boolLegend ? legendXSize=50 : legendXSize=0;
   var canvasXSize=Number(props.canvasSize);
   var canvasYSize=Number(props.canvasSize+Number(props.titleText.size));
   var pieChartXSize=canvasXSize*(props.pieChartPercent/100);
   var pieChartYSize=canvasYSize*(props.pieChartPercent/100);
   var xPadding=(canvasXSize-pieChartXSize)/2;
   var yPadding=(canvasYSize-pieChartYSize)/2;
-  
+
+  canvasXSize+=legendXSize;
 
   const draw = (ctx) => {
     var totalValue = 0;
@@ -28,6 +28,7 @@ function PieChartCanvas(props) {
     var pieChartRadius = pieChartXSize / 2;
     var pieChartCenterX = xPadding + pieChartXSize / 2;
     var pieChartCenterY = yPadding + pieChartYSize / 2;
+    var cubeSize=10;
 
     ctx.fillStyle = props.canvasColor;
     ctx.fillRect(0, 0, canvasXSize, canvasYSize);
@@ -65,9 +66,6 @@ function PieChartCanvas(props) {
       var nameY;
       var valueX;
       var valueY;
-
-
-      
 
       var pieValueText;
       if (props.boolDisplayValue)
@@ -111,9 +109,19 @@ function PieChartCanvas(props) {
       }
 
 
+      
+      if(!props.boolLegend)
+      {
       ctx.fillStyle = props.namesText.color;
       ctx.font = props.namesText.size+"px "+ props.namesText.font;
       ctx.fillText(element.pieName,nameX,nameY);
+      }
+    else
+    {
+      console.log(xPadding+pieChartXSize,yPadding,cubeSize,cubeSize)
+      ctx.fillRect(xPadding+pieChartXSize+canvasXSize*0.02,yPadding+element.index*30,cubeSize,cubeSize)
+      ctx.fillText(element.pieName,xPadding+pieChartXSize+cubeSize*1.25+canvasXSize*0.02,yPadding+element.index*30+Number(props.namesText.size));
+    }
 
       ctx.fillStyle = props.valuesText.color;
       ctx.font = props.valuesText.size+"px "+ props.valuesText.font;
@@ -126,14 +134,13 @@ function PieChartCanvas(props) {
   };
 
   useEffect(() => {
-    const canvas = myCanvas.current;
+    const canvas = ref.current;
     const context = canvas.getContext("2d");
-
-    //Our draw come here
+    //Our draw come here  
     draw(context);
   },); //can comment [draw]
 
-  return <canvas height={canvasYSize} width={canvasXSize} ref={myCanvas} ></canvas>;
-}
+  return <canvas height={canvasYSize} width={canvasXSize} ref={ref} ></canvas>;
+})
 
 export default PieChartCanvas;
