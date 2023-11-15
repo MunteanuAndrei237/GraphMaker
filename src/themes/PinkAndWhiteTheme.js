@@ -1,10 +1,12 @@
 import { createTheme } from "@mui/material/styles";
-const myTheme = createTheme({
+const PinkAndWhiteTheme = createTheme({
     palette: {
       primary: {
         main: "#f64c72",
       },
     },
   });
+
+
   
-  export default myTheme;
+  export default PinkAndWhiteTheme;

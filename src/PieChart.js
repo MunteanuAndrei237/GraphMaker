@@ -1,13 +1,10 @@
-import "./pieChart.css";
-import PieChartCanvas from "./PieChartCanvas.js";
-
 import { useState, useRef } from "react";
 
 import { CgAddR } from "react-icons/cg";
 import { FaTrash } from "react-icons/fa";
 import { IoIosArrowDown } from "react-icons/io";
-
 import { ThemeProvider } from "@emotion/react";
+
 import {
   Button,
   Checkbox,
@@ -23,119 +20,55 @@ import {
   Collapse,
 } from "@mui/material";
 import { MuiColorInput } from "mui-color-input";
-import myTheme from "./myTheme.js";
 
-const fontSizes = [8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 28, 32];
-const vectorColorPalettes = [
-  {
-    index:1,
-    name: "white + pink",
-    vectorFillColors: [
-      "rgb(255, 192, 203)",
-      "rgb(255, 182, 193)",
-      "rgb(255, 105, 180)",
-      "rgb(255, 20, 147)",
-      "rgb(219, 112, 147)",
-      "rgb(238, 130, 238)",
-      "rgb(186, 85, 211)",
-      "rgb(218, 112, 214)",
-      "rgb(199, 21, 133)",
-      "rgb(255, 0, 255)",
-      "rgb(255, 228, 225)",
-      "rgb(255, 240, 245)",
-    ],
-    cubeColors :[ "white","pink","magenta" ],
-    itemColor:"rgb(255, 222, 227)",
-    pieChartContainerColor:"rgba(239, 239, 239)",
-    pieChartCanvasContainerColor:"white",
-    containerGradient1:"pink",
-    containerGradient2:"magenta",
-    theme:myTheme
-  },
-  {
-    index: 2,
-    name: "blue + green",
-    vectorFillColors: [
-      "rgb(173, 216, 230)",
-      "rgb(135, 206, 250)",
-      "rgb(70, 130, 180)",
-      "rgb(0, 128, 128)",
-      "rgb(0, 255, 255)",
-      "rgb(32, 178, 170)",
-      "rgb(60, 179, 113)",
-      "rgb(0, 128, 0)",
-      "rgb(50, 205, 50)",
-      "rgb(0, 255, 0)",
-      "rgb(144, 238, 144)",
-      "rgb(152, 251, 152)",
-    ],
-    cubeColors: ["blue", "green", "darkgreen"],
-    itemColor: "rgb(173, 216, 230)",
-    pieChartContainerColor: "rgba(200, 230, 201)",
-    pieChartCanvasContainerColor: "white",
-    containerGradient1: "lightblue",
-    containerGradient2: "lightgreen",
-    theme: myTheme,
-  }
-];
+import "./pieChart.css";
+import PieChartCanvas from "./PieChartCanvas.js";
+import PinkAndWhiteTheme from "./themes/PinkAndWhiteTheme.js";
+import utilitiesData from "./utilities.json";
 
-
-
-const fontOptions = [
-  "Arial",
-  "Helvetica",
-  "Times New Roman",
-  "Courier New",
-  "Georgia",
-  "Palatino",
-  "Verdana",
-  "Garamond",
-  "Bookman",
-  "Comic Sans MS",
-  "Trebuchet MS",
-  "Arial Black",
-  "Impact",
-  "Lucida Console",
-  "Courier",
-];
+const vectorColorPalettes = utilitiesData.vectorColorPalettes;
+const vectorFontSizes = utilitiesData.vectorFontSizes;
+const vectorFontFamily = utilitiesData.vectorFontFamily;
 
 function PieChart() {
-  const [colorPalette,setColorPalette]=useState(vectorColorPalettes[0]);
-  var vectorFillColors = colorPalette.vectorFillColors;
+  const [colorPalette, setColorPalette] = useState(vectorColorPalettes[0]);
+  const [theme, setTheme] = useState(PinkAndWhiteTheme);
+  const canvasRef = useRef();
+
   const initialFields = [
     {
       index: 1,
       pieName: "Name1",
       pieValue: 51,
       pieColor: colorPalette.vectorFillColors[1],
-      pieCustomColor: vectorFillColors[1],
+      pieCustomColor: colorPalette.vectorFillColors[1],
     },
     {
       index: 2,
       pieName: "Name2",
       pieValue: 49,
-      pieColor: vectorFillColors[2],
-      pieCustomColor: vectorFillColors[2],
+      pieColor: colorPalette.vectorFillColors[2],
+      pieCustomColor: colorPalette.vectorFillColors[2],
     },
     {
       index: 3,
       pieName: "Name3",
       pieValue: 22,
-      pieColor: vectorFillColors[3],
-      pieCustomColor: vectorFillColors[3],
+      pieColor: colorPalette.vectorFillColors[3],
+      pieCustomColor: colorPalette.vectorFillColors[3],
     },
     {
       index: 4,
       pieName: "Name4",
       pieValue: 87,
-      pieColor: vectorFillColors[4],
-      pieCustomColor: vectorFillColors[4],
+      pieColor: colorPalette.vectorFillColors[4],
+      pieCustomColor: colorPalette.vectorFillColors[4],
     },
   ];
 
   const [fields, setFields] = useState(initialFields);
-  const [pieChartTitle, setPieChartTitle] = useState("white + pink");
- 
+  const [pieChartTitle, setPieChartTitle] = useState("");
+  
 
   const [canvasSize, setCanvasSize] = useState(500);
   const [canvasColor, setCanvasColor] = useState("white");
@@ -152,20 +85,32 @@ function PieChart() {
   const [titleText, setTitleText] = useState({
     color: "black",
     size: 28,
-    font: "Arial",
+    font: "Arial"
   });
   const [valuesText, setValuesText] = useState({
     color: "black",
     size: 14,
-    font: "Arial",
+    font: "Arial"
   });
   const [namesText, setNamesText] = useState({
     color: "black",
     size: 14,
-    font: "Arial",
+    font: "Arial"
   });
 
-  const canvasRef = useRef();
+  const loadTheme = async (themeName) => {
+    let themeModule;
+
+    try {
+      themeModule = await import(`./themes/${themeName}.js`);
+    } catch (error) {
+      console.error("Error loading theme:", error);
+    }
+
+    if (themeModule) {
+      setTheme(themeModule.default);
+    }
+  };
 
   const handleInputChange = (index, key, value) => {
     setFields((prevFields) => {
@@ -190,41 +135,36 @@ function PieChart() {
         index: prevFields.length + 1,
         pieName: "",
         pieValue: 0,
-        pieColor: vectorFillColors[prevFields.length + 1],
-        pieCustomColor: vectorFillColors[prevFields.length + 1],
+        pieColor: colorPalette.vectorFillColors[prevFields.length + 1],
+        pieCustomColor: colorPalette.vectorFillColors[prevFields.length + 1],
       },
     ]);
   };
 
   function handleCustomColors() {
     setBoolCustomColors(!boolCustomColors);
-
     if (boolCustomColors) {
       document.documentElement.style.setProperty("--chartFormSize", "27");
       setFields((prevFields) => {
         const newFields = [...prevFields];
         newFields.forEach((element) => {
-          element.pieColor = vectorFillColors[element.index];
+          element.pieColor = colorPalette.vectorFillColors[element.index];
         });
         return newFields;
       });
-    } else {
+    } else 
       document.documentElement.style.setProperty("--chartFormSize", "36");
-    }
   }
-
-  const downloadCanvas = () => {
-    const dataURL = canvasRef.current.toDataURL("image/png");
-    const a = document.createElement("a");
-    a.href = dataURL;
-    a.download = "canvas_image.png";
-    a.click();
-  };
 
   function deleteField(ind) {
     var deletedColor = fields[ind - 1].pieColor;
-    vectorFillColors.splice(vectorFillColors.indexOf(deletedColor), 1);
-    vectorFillColors.splice(fields.length, 0, deletedColor);
+    setColorPalette((prevColorPalette) => {
+      const newColorPalette = { ...prevColorPalette };
+      newColorPalette.vectorFillColors.splice(
+        newColorPalette.vectorFillColors.indexOf(deletedColor),1);
+      newColorPalette.vectorFillColors.splice(fields.length, 0, deletedColor);
+      return newColorPalette;
+    });
 
     setFields((prevFields) => {
       const newFields = [...prevFields];
@@ -235,6 +175,22 @@ function PieChart() {
 
       return newFields;
     });
+  }
+
+  function changeTheme(newTheme) {
+    loadTheme(newTheme.themeString);
+    setColorPalette(newTheme);
+    setFields((prevFields) => {
+      const newFields = [...prevFields];
+      newFields.forEach((field) => {
+        field.pieColor = newTheme.vectorFillColors[field.index];
+        field.pieCustomColor = newTheme.vectorFillColors[field.index];
+      });
+      return newFields;
+    });
+
+    for (const key in newTheme.css)
+      document.documentElement.style.setProperty("--" + key, newTheme.css[key]);
   }
 
   function handleDisplayPercentOrValue(s) {
@@ -248,39 +204,46 @@ function PieChart() {
     }
   }
 
+  const downloadCanvas = () => {
+    const dataURL = canvasRef.current.toDataURL("image/png");
+    const a = document.createElement("a");
+    a.href = dataURL;
+    a.download = "canvas_image.png";
+    a.click();
+  };
+
   return (
-    <ThemeProvider theme={myTheme}>
-      
+    <ThemeProvider theme={theme}>
       <div className="pieChartContainer">
         <div className="chartForm">
           <h2>Chart Details</h2>
           <div className="customColorsAndCreateContainer">
-          <div class="tileAndPalette">
-          <TextField
-            className="pieChartTitle"
-            label="Chart name"
-            placeholder="Type chart name here"
-            value={pieChartTitle}
-            onChange={(e) => setPieChartTitle(e.target.value)}
-          />
-          <FormControl>
+            <div className="tileAndPalette">
+              <TextField
+                className="pieChartTitle"
+                label="Chart name"
+                placeholder="Type chart name here"
+                value={pieChartTitle}
+                onChange={(e) => setPieChartTitle(e.target.value)}
+              />
+              <FormControl>
                 <InputLabel>Color pallette</InputLabel>
                 <Select
                   label="colorPalette"
                   value={colorPalette}
                   onChange={(e) => {
-                    setColorPalette(e.target.value);
+                    changeTheme(e.target.value);
                   }}
                 >
-                  {vectorColorPalettes.map((cp, index) => (
-                    <MenuItem key={index} value={cp}>
+                  {vectorColorPalettes.map((cp) => (
+                    <MenuItem key={cp.index} value={cp}>
                       {cp.name}
                     </MenuItem>
                   ))}
                 </Select>
-                </FormControl>
-                </div>
-                </div>
+              </FormControl>
+            </div>
+          </div>
           <div className="fieldsContainer">
             <div>
               <h4>Piechart data</h4>
@@ -290,8 +253,8 @@ function PieChart() {
               {boolCustomColors ? <h4>Color</h4> : null} <h4>Delete</h4>{" "}
             </div>
             {fields.map((field) => (
-              <div className="itemAndSpacer">
-                <ListItem className="tableItem" key={field.index}>
+              <div className="itemAndSpacer" key={field.index}>
+                <ListItem className="tableItem">
                   <Input
                     className="myInput"
                     placeholder={"Slice name"}
@@ -318,6 +281,7 @@ function PieChart() {
                   />
                   {boolCustomColors ? (
                     <MuiColorInput
+                      label="slice color"
                       className="myInput"
                       value={field.pieCustomColor}
                       onChange={(newValue) =>
@@ -478,7 +442,7 @@ function PieChart() {
               <FormControl>
                 <InputLabel>Title size</InputLabel>
                 <Select
-                label="Title size"
+                  label="Title size"
                   value={titleText.size}
                   onChange={(e) => {
                     var a = { ...titleText };
@@ -486,7 +450,7 @@ function PieChart() {
                     if (!isNaN(Number(e.target.value))) setTitleText(a);
                   }}
                 >
-                  {fontSizes.map((size, index) => (
+                  {vectorFontSizes.map((size, index) => (
                     <MenuItem key={index} value={size}>
                       {size}
                     </MenuItem>
@@ -496,7 +460,7 @@ function PieChart() {
               <FormControl>
                 <InputLabel>Title font</InputLabel>
                 <Select
-                label="Title font"
+                  label="Title font"
                   value={titleText.font}
                   onChange={(e) => {
                     var a = { ...titleText };
@@ -504,7 +468,7 @@ function PieChart() {
                     setTitleText(a);
                   }}
                 >
-                  {fontOptions.map((font, index) => (
+                  {vectorFontFamily.map((font, index) => (
                     <MenuItem key={index} value={font}>
                       {font}
                     </MenuItem>
@@ -533,7 +497,7 @@ function PieChart() {
               <FormControl>
                 <InputLabel>Names size</InputLabel>
                 <Select
-                label="Names size"
+                  label="Names size"
                   value={namesText.size}
                   onChange={(e) => {
                     var a = { ...namesText };
@@ -541,7 +505,7 @@ function PieChart() {
                     if (!isNaN(Number(e.target.value))) setNamesText(a);
                   }}
                 >
-                  {fontSizes.map((size, index) => (
+                  {vectorFontSizes.map((size, index) => (
                     <MenuItem key={index} value={size}>
                       {size}
                     </MenuItem>
@@ -551,7 +515,7 @@ function PieChart() {
               <FormControl>
                 <InputLabel>Names font</InputLabel>
                 <Select
-                label="Names font"
+                  label="Names font"
                   value={namesText.font}
                   onChange={(e) => {
                     var a = { ...namesText };
@@ -560,7 +524,7 @@ function PieChart() {
                   }}
                   size="meidum"
                 >
-                  {fontOptions.map((font, index) => (
+                  {vectorFontFamily.map((font, index) => (
                     <MenuItem key={index} value={font}>
                       {font}
                     </MenuItem>
@@ -590,7 +554,7 @@ function PieChart() {
               <FormControl>
                 <InputLabel>Values size</InputLabel>
                 <Select
-                label="Values size"
+                  label="Values size"
                   value={valuesText.size}
                   onChange={(e) => {
                     var a = { ...valuesText };
@@ -598,7 +562,7 @@ function PieChart() {
                     if (!isNaN(Number(e.target.value))) setValuesText(a);
                   }}
                 >
-                  {fontSizes.map((size, index) => (
+                  {vectorFontSizes.map((size, index) => (
                     <MenuItem key={index} value={size}>
                       {size}
                     </MenuItem>
@@ -608,7 +572,7 @@ function PieChart() {
               <FormControl>
                 <InputLabel>Values font</InputLabel>
                 <Select
-                label="Values font"
+                  label="Values font"
                   value={valuesText.font}
                   onChange={(e) => {
                     var a = { ...valuesText };
@@ -616,7 +580,7 @@ function PieChart() {
                     setValuesText(a);
                   }}
                 >
-                  {fontOptions.map((font, index) => (
+                  {vectorFontFamily.map((font, index) => (
                     <MenuItem key={index} value={font}>
                       {font}
                     </MenuItem>

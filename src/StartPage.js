@@ -4,12 +4,13 @@ import { useState } from 'react';
 import './startPage.css';
 import { useRef } from 'react';
 
+
+
 function StartPage()
 {
     const [graphsArray,setgraphsArray] = useState([]);
     const [graphType,setgraphType] = useState('pieChart');
     const selectRef = useRef(null);
-    console.log(graphsArray)
     return (
         <div id="wholePage">
         <div id="mainPage">

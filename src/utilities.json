@@ -1,0 +1,76 @@
+{
+  "vectorColorPalettes": [
+    {
+      "index": 1,
+      "name": "white + pink",
+      "vectorFillColors": [
+        "rgb(255, 192, 203)",
+        "rgb(255, 182, 193)",
+        "rgb(255, 105, 180)",
+        "rgb(255, 20, 147)",
+        "rgb(219, 112, 147)",
+        "rgb(238, 130, 238)",
+        "rgb(186, 85, 211)",
+        "rgb(218, 112, 214)",
+        "rgb(199, 21, 133)",
+        "rgb(255, 0, 255)",
+        "rgb(255, 228, 225)",
+        "rgb(255, 240, 245)"
+      ],
+      "cubeColors": ["white", "pink", "magenta"],
+      "css": {
+        "itemColor": "rgb(255, 222, 227)",
+        "pieChartContainerColor": "rgba(239, 239, 239)",
+        "pieChartCanvasContainerColor": "white",
+        "containerGradient1": "pink",
+        "containerGradient2": "magenta"
+      },
+      "themeString": "PinkAndWhiteTheme"
+    },
+    {
+      "index": 2,
+      "name": "blue + green",
+      "vectorFillColors": [
+        "rgb(173, 216, 230)",
+        "rgb(135, 206, 250)",
+        "rgb(70, 130, 180)",
+        "rgb(0, 128, 128)",
+        "rgb(0, 255, 255)",
+        "rgb(32, 178, 170)",
+        "rgb(60, 179, 113)",
+        "rgb(0, 128, 0)",
+        "rgb(50, 205, 50)",
+        "rgb(0, 255, 0)",
+        "rgb(144, 238, 144)",
+        "rgb(152, 251, 152)"
+      ],
+      "cubeColors": ["blue", "green", "darkgreen"],
+      "css": {
+        "itemColor": "rgb(173, 216, 230)",
+        "pieChartContainerColor": "rgba(200, 230, 201)",
+        "pieChartCanvasContainerColor": "white",
+        "containerGradient1": "lightblue",
+        "containerGradient2": "lightgreen"
+      },
+      "themeString": "BlueAndWhiteTheme"
+    }
+  ],
+  "vectorFontSizes": [8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 28, 32],
+  "vectorFontFamily": [
+    "Arial",
+    "Helvetica",
+    "Times New Roman",
+    "Courier New",
+    "Georgia",
+    "Palatino",
+    "Verdana",
+    "Garamond",
+    "Bookman",
+    "Comic Sans MS",
+    "Trebuchet MS",
+    "Arial Black",
+    "Impact",
+    "Lucida Console",
+    "Courier"
+  ]
+}
