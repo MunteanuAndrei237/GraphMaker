@@ -1,0 +1,61 @@
+.GraphContainer{
+    display: grid;
+    grid-template-columns: 47% 47%;
+    justify-content: space-between;
+    border: 1rem solid #aaaaff;
+    border-image: repeating-linear-gradient(45deg, transparent, transparent 5px, #aaaaff 6px, #aaaaff 15px, transparent 16px, transparent 20px) 20/1rem;
+    background: var(--pieChartContainerColor);
+    height: 96vh;
+    overflow: auto;
+    padding:1.4%;
+  }
+  .canvasContainer {
+    height: 90%;
+    display: grid;
+    align-items: center;
+    justify-items: center;
+    background-color: var(--pieChartCanvasContainerColor);
+    border: 5px solid;
+    border-image: linear-gradient(45deg, var(--containerGradient1), var(--containerGradient2)) 1;
+    grid-template-rows: 90% 10%;
+}
+.titleInput{
+    width: 50%;
+}
+.titleAndPalette {
+    display: flex;
+    justify-content: space-between;
+    width: 90%;
+    margin: 1vh;
+}
+.optionSection{
+    display: grid;
+    row-gap: 1vh;
+    justify-items: start;
+}
+
+.optionsContainer{
+    margin-top: 1.5vh;
+  }
+.textOptions{
+display:grid;
+grid-template-columns: repeat(5,18%);
+gap: 2%;
+align-items: center;
+}
+.xInputAndColor {
+    display: inline-grid;
+    justify-items: center;
+    align-items: center;
+    row-gap: 1vh;
+}
+
+.xInput {
+    display: flex;
+    flex-shrink: 0;
+}
+.xInputTrash {
+    min-width: 1vw;
+    position: relative;
+    top: 10px;
+}

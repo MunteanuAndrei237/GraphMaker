@@ -1,7 +1,7 @@
 import PieChart from './PieChart.js';
 import BarGraph from './BarGraph.js';
 import LineGraph from './LineGraph.js';
-import './graph.css';
+
 
 function Graph(props) {
   return (

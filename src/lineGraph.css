@@ -1,0 +1,97 @@
+:root {
+    --lineGraphFormItems: 36;
+    --itemColor: rgb(255, 222, 227);
+    --pieChartContainerColor: rgba(239, 239, 239);
+    --pieChartCanvasContainerColor: white;
+    --containerGradient1: pink;
+    --containerGradient2: magenta;
+}
+
+.lgFieldsContainer {
+    width: 90%;
+    overflow: auto;
+    display: grid;
+    align-items: center;
+    justify-items: center;
+    max-height: 50vh;
+}
+
+.legendValues {
+    display: inline-grid;
+    column-gap: 2vw;
+    grid-template-columns: repeat(auto-fill, 6vw);
+    justify-items: center;
+    align-items: center;
+    text-align: center;
+    padding: 1vh;
+    background-color: var(--itemColor);
+    margin-bottom: 1vh;
+    grid-auto-flow: column;
+}
+
+.legendValues>* {
+    min-width: 6vw;
+}
+
+
+
+.inputValue {
+    display: inline-grid;
+    column-gap: 2vw;
+    grid-template-columns: repeat(auto-fill, 6vw);
+    justify-items: center;
+    align-items: center;
+    text-align: center;
+    background-color: var(--itemColor);
+    padding: 1vh;
+    grid-auto-flow: column;
+}
+
+
+.inputValues {
+    display: grid;
+    row-gap: 2vh;
+}
+
+
+
+.lgNonTextOptions {
+    margin-top: 2vh;
+    display: grid;
+    grid-template-columns: repeat(5, 18%);
+    gap: 2%;
+    align-items: start;
+}
+
+.lgTextHeader {
+    text-align: center;
+    padding: 3vh;
+}
+
+
+
+
+
+
+
+
+.lgTopRightcornerInput1 {
+    width: 50% !important;
+    top: 1vh;
+
+}
+
+.lgTopRightcornerInput2 {
+    width: 50% !important;
+    bottom: 1vh;
+
+}
+
+.diagonalSeparator {
+    top: -1vh;
+    position: relative;
+    height: 1px;
+    width: 100px;
+    rotate: 30deg;
+    background-color: black;
+}

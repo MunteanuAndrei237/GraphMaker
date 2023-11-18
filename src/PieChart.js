@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useReducer } from "react";
 
 import { CgAddR } from "react-icons/cg";
 import { FaTrash } from "react-icons/fa";
@@ -18,6 +18,7 @@ import {
   ListItem,
   InputAdornment,
   Collapse,
+  Switch,
 } from "@mui/material";
 import { MuiColorInput } from "mui-color-input";
 
@@ -38,37 +39,74 @@ function PieChart() {
   const initialFields = [
     {
       index: 1,
-      pieName: "Name1",
-      pieValue: 51,
+      pieName: "O",
+      pieValue: 45,
       pieColor: colorPalette.vectorFillColors[1],
       pieCustomColor: colorPalette.vectorFillColors[1],
     },
     {
       index: 2,
-      pieName: "Name2",
-      pieValue: 49,
+      pieName: "A",
+      pieValue: 29,
       pieColor: colorPalette.vectorFillColors[2],
       pieCustomColor: colorPalette.vectorFillColors[2],
     },
     {
       index: 3,
-      pieName: "Name3",
-      pieValue: 22,
+      pieName: "B",
+      pieValue: 20,
       pieColor: colorPalette.vectorFillColors[3],
       pieCustomColor: colorPalette.vectorFillColors[3],
     },
     {
       index: 4,
-      pieName: "Name4",
-      pieValue: 87,
+      pieName: "AB",
+      pieValue: 6,
       pieColor: colorPalette.vectorFillColors[4],
       pieCustomColor: colorPalette.vectorFillColors[4],
     },
   ];
 
-  const [fields, setFields] = useState(initialFields);
-  const [pieChartTitle, setPieChartTitle] = useState("");
-  
+  const [fields, fieldsDispatch] = useReducer(fieldsReducer, initialFields);
+  const [pieChartTitle, setPieChartTitle] = useState(
+    "Population distribution by blood type"
+  );
+
+  function fieldsReducer(state, action) {
+    switch (action.type) {
+      case "add":
+        return [
+          ...state,
+          {
+            index: state.length + 1,
+            pieName: "",
+            pieValue: 0,
+            pieColor: colorPalette.vectorFillColors[state.length + 1],
+            pieCustomColor: colorPalette.vectorFillColors[state.length + 1],
+          },
+        ];
+      case "change":
+        const { indexC, keyC, valueC } = action.payload;
+        const newStateC = [...state];
+        newStateC[indexC][keyC] = valueC;
+        return newStateC;
+      case "number":
+        const { indexN, keyN, valueN } = action.payload;
+        const newStateN = [...state];
+        if (!isNaN(Number(valueN))) newStateN[indexN][keyN] = Number(valueN);
+        return newStateN;
+      case "delete":
+        const { indexD} = action.payload;
+        const stateD = [...state];
+        stateD.splice(indexD - 1, 1);
+        stateD.forEach((element, index) => {
+          element.index = index + 1;
+        });
+        return stateD;
+      default:
+        return state;
+    }
+  }
 
   const [canvasSize, setCanvasSize] = useState(500);
   const [canvasColor, setCanvasColor] = useState("white");
@@ -79,23 +117,28 @@ function PieChart() {
   const [boolCustomColors, setBoolCustomColors] = useState(true);
   const [boolValueInside, setBoolValueInside] = useState(true);
   const [boolNameInside, setBoolNameInside] = useState(false);
-  const [boolCustomSettings, setBoolCustomSettings] = useState(false);
+  const [boolDisplayOptions, setBoolDisplayOptions] = useState(false);
   const [boolLegend, setBoolLegend] = useState(false);
 
   const [titleText, setTitleText] = useState({
     color: "black",
     size: 28,
-    font: "Arial"
+    font: "Arial",
   });
   const [valuesText, setValuesText] = useState({
     color: "black",
     size: 14,
-    font: "Arial"
+    font: "Arial",
   });
   const [namesText, setNamesText] = useState({
     color: "black",
     size: 14,
-    font: "Arial"
+    font: "Arial",
+  });
+  const [legendText, setLegendText] = useState({
+    color: "black",
+    size: 14,
+    font: "Arial",
   });
 
   const loadTheme = async (themeName) => {
@@ -112,48 +155,13 @@ function PieChart() {
     }
   };
 
-  const handleInputChange = (index, key, value) => {
-    setFields((prevFields) => {
-      const newFields = [...prevFields];
-      newFields[index][key] = value;
-      return newFields;
-    });
-  };
-
-  const handleInputChangeNumber = (index, key, value) => {
-    setFields((prevFields) => {
-      const newFields = [...prevFields];
-      if (!isNaN(Number(value))) newFields[index][key] = Number(value);
-      return newFields;
-    });
-  };
-
-  const createNewField = () => {
-    setFields((prevFields) => [
-      ...prevFields,
-      {
-        index: prevFields.length + 1,
-        pieName: "",
-        pieValue: 0,
-        pieColor: colorPalette.vectorFillColors[prevFields.length + 1],
-        pieCustomColor: colorPalette.vectorFillColors[prevFields.length + 1],
-      },
-    ]);
-  };
-
   function handleCustomColors() {
     setBoolCustomColors(!boolCustomColors);
     if (boolCustomColors) {
       document.documentElement.style.setProperty("--chartFormSize", "27");
-      setFields((prevFields) => {
-        const newFields = [...prevFields];
-        newFields.forEach((element) => {
-          element.pieColor = colorPalette.vectorFillColors[element.index];
-        });
-        return newFields;
-      });
-    } else 
-      document.documentElement.style.setProperty("--chartFormSize", "36");
+    } 
+    else 
+    document.documentElement.style.setProperty("--chartFormSize", "36");
   }
 
   function deleteField(ind) {
@@ -161,34 +169,37 @@ function PieChart() {
     setColorPalette((prevColorPalette) => {
       const newColorPalette = { ...prevColorPalette };
       newColorPalette.vectorFillColors.splice(
-        newColorPalette.vectorFillColors.indexOf(deletedColor),1);
+        newColorPalette.vectorFillColors.indexOf(deletedColor),
+        1
+      );
       newColorPalette.vectorFillColors.splice(fields.length, 0, deletedColor);
       return newColorPalette;
     });
 
-    setFields((prevFields) => {
-      const newFields = [...prevFields];
-      newFields.splice(ind - 1, 1);
-      newFields.forEach((element, index) => {
-        element.index = index + 1;
-      });
-
-      return newFields;
-    });
+    fieldsDispatch({ type: "delete", payload: { indexD: ind } });
   }
 
-  function changeTheme(newTheme) {
+  function changeColorPalette(newTheme) {
     loadTheme(newTheme.themeString);
     setColorPalette(newTheme);
-    setFields((prevFields) => {
-      const newFields = [...prevFields];
-      newFields.forEach((field) => {
-        field.pieColor = newTheme.vectorFillColors[field.index];
-        field.pieCustomColor = newTheme.vectorFillColors[field.index];
+    fields.forEach((field) => {
+      fieldsDispatch({
+        type: "change",
+        payload: {
+          indexC: field.index-1,
+          keyC: "pieCustomColor",
+          valueC: newTheme.vectorFillColors[field.index],
+        },
       });
-      return newFields;
+      fieldsDispatch({
+        type: "change",
+        payload: {
+          indexC: field.index-1,
+          keyC: "pieColor",
+          valueC: newTheme.vectorFillColors[field.index],
+        },
+      });
     });
-
     for (const key in newTheme.css)
       document.documentElement.style.setProperty("--" + key, newTheme.css[key]);
   }
@@ -214,13 +225,11 @@ function PieChart() {
 
   return (
     <ThemeProvider theme={theme}>
-      <div className="pieChartContainer">
-        <div className="chartForm">
+        <div className="pieChartForm">
           <h2>Chart Details</h2>
-          <div className="customColorsAndCreateContainer">
-            <div className="tileAndPalette">
+            <div className="titleAndPalette">
               <TextField
-                className="pieChartTitle"
+                className="titleInput"
                 label="Chart name"
                 placeholder="Type chart name here"
                 value={pieChartTitle}
@@ -230,66 +239,75 @@ function PieChart() {
                 <InputLabel>Color pallette</InputLabel>
                 <Select
                   label="colorPalette"
-                  value={colorPalette}
+                  value={colorPalette.name}
                   onChange={(e) => {
-                    changeTheme(e.target.value);
+                    changeColorPalette(
+                      vectorColorPalettes.find(
+                        (obj) => obj.name === e.target.value
+                      )
+                    );
                   }}
                 >
                   {vectorColorPalettes.map((cp) => (
-                    <MenuItem key={cp.index} value={cp}>
+                    <MenuItem key={cp.index} value={cp.name}>
                       {cp.name}
                     </MenuItem>
                   ))}
                 </Select>
               </FormControl>
             </div>
-          </div>
           <div className="fieldsContainer">
-            <div>
-              <h4>Piechart data</h4>
-            </div>
             <div className="tableHeader">
-              <h4>Name</h4> <h4>Value</h4>{" "}
-              {boolCustomColors ? <h4>Color</h4> : null} <h4>Delete</h4>{" "}
+              <h4>Name</h4> <h4>Value</h4>
+              {boolCustomColors ? <h4>Color</h4> : null} <h4>Delete</h4>
             </div>
             {fields.map((field) => (
-              <div className="itemAndSpacer" key={field.index}>
+              <div key={field.index}>
                 <ListItem className="tableItem">
                   <Input
                     className="myInput"
-                    placeholder={"Slice name"}
+                    placeholder="Slice name"
                     value={field.pieName}
                     onChange={(e) =>
-                      handleInputChange(
-                        field.index - 1,
-                        "pieName",
-                        e.target.value
-                      )
+                      fieldsDispatch({
+                        type: "change",
+                        payload: {
+                          indexC: field.index - 1,
+                          keyC: "pieName",
+                          valueC: e.target.value,
+                        },
+                      })
                     }
                   />
                   <Input
                     className="myInput"
-                    placeholder={"Slice value"}
+                    placeholder="Slice value"
                     value={field.pieValue}
                     onChange={(e) =>
-                      handleInputChangeNumber(
-                        field.index - 1,
-                        "pieValue",
-                        e.target.value
-                      )
+                      fieldsDispatch({
+                        type: "number",
+                        payload: {
+                          indexN: field.index - 1,
+                          keyN: "pieValue",
+                          valueN: e.target.value,
+                        },
+                      })
                     }
                   />
                   {boolCustomColors ? (
                     <MuiColorInput
-                      label="slice color"
+                      label="Slice color"
                       className="myInput"
                       value={field.pieCustomColor}
                       onChange={(newValue) =>
-                        handleInputChange(
-                          field.index - 1,
-                          "pieCustomColor",
-                          newValue
-                        )
+                        fieldsDispatch({
+                          type: "change",
+                          payload: {
+                            indexC: field.index - 1,
+                            keyC: "pieCustomColor",
+                            valueC: newValue,
+                          },
+                        })
                       }
                     />
                   ) : null}
@@ -299,15 +317,13 @@ function PieChart() {
                     }
                   />
                 </ListItem>
-                <div className="spacer"></div>
               </div>
             ))}
           </div>
-          <div className="customColorsAndCreateContainer">
-            <div className="customColorsAndCreate">
+            <div className="titleAndPalette">
               <div>
                 Create new field:
-                <CgAddR onClick={() => createNewField()} />
+                <CgAddR onClick={() => fieldsDispatch({ type: "add" })} />
               </div>
               <FormControlLabel
                 control={
@@ -319,119 +335,122 @@ function PieChart() {
                 label="Use custom colors"
               />
             </div>
-          </div>
-          <div onClick={() => setBoolCustomSettings(!boolCustomSettings)}>
+          <div onClick={() => setBoolDisplayOptions(!boolDisplayOptions)}>
             Show options <IoIosArrowDown />
           </div>
-          <Collapse in={boolCustomSettings} className="optionsContainer">
+          <Collapse in={boolDisplayOptions} className="optionsContainer">
             <div className="optionsFlex">
               <div>
-                <h2>Piechart options</h2>
-                <div>
-                  <TextField
-                    type="percent"
-                    value={pieChartPercent}
-                    onChange={(e) => setPieChartPercent(e.target.value)}
-                    label="Piechart size(in percent)"
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">%</InputAdornment>
-                      ),
-                    }}
-                  />
+                <div className="optionSection">
+                  <h4>Piechart options</h4>
+                  
+                    <TextField
+                      type="percent"
+                      value={pieChartPercent}
+                      onChange={(e) => setPieChartPercent(e.target.value)}
+                      label="Piechart size"
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">%</InputAdornment>
+                        ),
+                      }}
+                    />
 
-                  <FormControlLabel
-                    className="checkBoxControlLabel"
-                    control={
-                      <Checkbox
-                        checked={boolDisplayPercent}
-                        onClick={() => handleDisplayPercentOrValue("p")}
-                      />
-                    }
-                    label="Display slice percent"
-                  />
+                    <FormControlLabel
+                      className="checkBoxControlLabel"
+                      control={
+                        <Checkbox
+                          checked={boolDisplayPercent}
+                          onClick={() => handleDisplayPercentOrValue("p")}
+                        />
+                      }
+                      label="Show percent"
+                    />
 
-                  <FormControlLabel
-                    className="checkBoxControlLabel"
-                    control={
-                      <Checkbox
-                        checked={boolDisplayValue}
-                        onClick={() => handleDisplayPercentOrValue("v")}
-                      />
-                    }
-                    label="Display slice value"
-                  />
+                    <FormControlLabel
+                      className="checkBoxControlLabel"
+                      control={
+                        <Checkbox
+                          checked={boolDisplayValue}
+                          onClick={() => handleDisplayPercentOrValue("v")}
+                        />
+                      }
+                      label="Show value"
+                    />
 
-                  <FormControlLabel
-                    className="checkBoxControlLabel"
-                    control={
-                      <Checkbox
-                        checked={boolValueInside}
-                        onClick={() => setBoolValueInside(!boolValueInside)}
-                      />
-                    }
-                    label="Move value inside the piechart"
-                  />
+                    <FormControlLabel
+                      className="checkBoxControlLabel"
+                      control={
+                        <Switch
+                          checked={boolValueInside}
+                          onClick={() => setBoolValueInside(!boolValueInside)}
+                        />
+                      }
+                      label="Move values inside"
+                    />
 
-                  <FormControlLabel
-                    className="checkBoxControlLabel"
-                    control={
-                      <Checkbox
-                        checked={boolNameInside}
-                        onClick={() => setBoolNameInside(!boolNameInside)}
-                      />
-                    }
-                    label="Move value inside the piechart"
-                  />
-                  <FormControlLabel
-                    className="checkBoxControlLabel"
-                    control={
-                      <Checkbox
-                        checked={boolLegend}
-                        onClick={() => setBoolLegend(!boolLegend)}
-                      />
-                    }
-                    label="Use legend"
-                  />
+                    <FormControlLabel
+                      className="checkBoxControlLabel"
+                      control={
+                        <Switch
+                          checked={boolNameInside}
+                          onClick={() => setBoolNameInside(!boolNameInside)}
+                        />
+                      }
+                      label="Move names inside"
+                    />
+                    <FormControlLabel
+                      className="checkBoxControlLabel"
+                      control={
+                        <Checkbox
+                          checked={boolLegend}
+                          onClick={() => setBoolLegend(!boolLegend)}
+                        />
+                      }
+                      label="Use legend"
+                    />
+                  
                 </div>
               </div>
               <div>
-                <h2>Canvas options</h2>
-                <TextField
-                  className="canvasOption"
-                  value={canvasSize}
-                  onChange={(e) =>
-                    !isNaN(Number(e.target.value))
-                      ? setCanvasSize(Number(e.target.value))
-                      : null
-                  }
-                  label="Canvas size(in pixels)"
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">px</InputAdornment>
-                    ),
-                  }}
-                />
-                <MuiColorInput
-                  className="canvasOption"
-                  label="Canvas color"
-                  value={canvasColor}
-                  onChange={(newValue) => {
-                    setCanvasColor(newValue);
-                    document.documentElement.style.setProperty(
-                      "--pieChartCanvasContainerColor",
-                      newValue
-                    );
-                  }}
-                />
+                <div className="optionSection">
+                  <h4>Canvas options</h4>
+                  <TextField
+                    value={canvasSize}
+                    onChange={(e) =>
+                      !isNaN(Number(e.target.value))
+                        ? setCanvasSize(Number(e.target.value))
+                        : null
+                    }
+                    label="Canvas size"
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">px</InputAdornment>
+                      ),
+                    }}
+                  />
+                  <MuiColorInput
+                    label="Canvas color"
+                    value={canvasColor}
+                    onChange={(newValue) => {
+                      setCanvasColor(newValue);
+                      document.documentElement.style.setProperty(
+                        "--pieChartCanvasContainerColor",
+                        newValue
+                      );
+                    }}
+                  />
+                </div>
               </div>
             </div>
 
-            <h2>Text options</h2>
+            <div className="lgTextHeader">
+              <h2>Text options</h2>
+            </div>
             <div className="textOptions">
-              <p>Title text </p>
+              <p>Title </p>
               <MuiColorInput
-                label="title color"
+                label="Title color"
                 value={titleText.color}
                 onChange={(newValue) => {
                   var a = { ...titleText };
@@ -476,7 +495,6 @@ function PieChart() {
                 </Select>
               </FormControl>
               <Button
-                className="myButton"
                 variant="outlined"
                 onClick={() =>
                   setTitleText({ font: "Arial", size: 28, color: "black" })
@@ -484,9 +502,9 @@ function PieChart() {
               >
                 Reset to default
               </Button>
-              <p>Names text</p>
+              <p>Slice names</p>
               <MuiColorInput
-                label="names color"
+                label="Name color"
                 value={namesText.color}
                 onChange={(newValue) => {
                   var a = { ...namesText };
@@ -495,9 +513,9 @@ function PieChart() {
                 }}
               />
               <FormControl>
-                <InputLabel>Names size</InputLabel>
+                <InputLabel>Name size</InputLabel>
                 <Select
-                  label="Names size"
+                  label="Name size"
                   value={namesText.size}
                   onChange={(e) => {
                     var a = { ...namesText };
@@ -513,9 +531,9 @@ function PieChart() {
                 </Select>
               </FormControl>
               <FormControl>
-                <InputLabel>Names font</InputLabel>
+                <InputLabel>Name font</InputLabel>
                 <Select
-                  label="Names font"
+                  label="Name font"
                   value={namesText.font}
                   onChange={(e) => {
                     var a = { ...namesText };
@@ -532,7 +550,6 @@ function PieChart() {
                 </Select>
               </FormControl>
               <Button
-                className="myButton"
                 variant="outlined"
                 onClick={() =>
                   setNamesText({ font: "Arial", size: 14, color: "black" })
@@ -540,9 +557,9 @@ function PieChart() {
               >
                 Reset to default
               </Button>
-              <p>Values text</p>
+              <p>Slice values</p>
               <MuiColorInput
-                label="values color"
+                label="Value color"
                 value={valuesText.color}
                 onChange={(newValue) => {
                   var a = { ...valuesText };
@@ -552,9 +569,9 @@ function PieChart() {
               />
 
               <FormControl>
-                <InputLabel>Values size</InputLabel>
+                <InputLabel>Value size</InputLabel>
                 <Select
-                  label="Values size"
+                  label="Value size"
                   value={valuesText.size}
                   onChange={(e) => {
                     var a = { ...valuesText };
@@ -570,9 +587,9 @@ function PieChart() {
                 </Select>
               </FormControl>
               <FormControl>
-                <InputLabel>Values font</InputLabel>
+                <InputLabel>Value font</InputLabel>
                 <Select
-                  label="Values font"
+                  label="Value font"
                   value={valuesText.font}
                   onChange={(e) => {
                     var a = { ...valuesText };
@@ -588,7 +605,6 @@ function PieChart() {
                 </Select>
               </FormControl>
               <Button
-                className="myButton"
                 variant="outlined"
                 onClick={() =>
                   setValuesText({ font: "Arial", size: 14, color: "black" })
@@ -596,10 +612,72 @@ function PieChart() {
               >
                 Reset to default
               </Button>
+              {boolLegend ? <p>Legend</p> : null}
+              {boolLegend ? (
+                <MuiColorInput
+                  label="Legend color"
+                  value={legendText.color}
+                  onChange={(newValue) => {
+                    var a = { ...legendText };
+                    a.color = newValue;
+                    setLegendText(a);
+                  }}
+                />
+              ) : null}
+              {boolLegend ? (
+                <FormControl>
+                  <InputLabel>Legend size</InputLabel>
+                  <Select
+                    label="Legend size"
+                    value={legendText.size}
+                    onChange={(e) => {
+                      var a = { ...legendText };
+                      a.size = e.target.value;
+                      setLegendText(a);
+                    }}
+                  >
+                    {vectorFontSizes.map((size, index) => (
+                      <MenuItem key={index} value={size}>
+                        {size}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              ) : null}
+              {boolLegend ? (
+                <FormControl>
+                  <InputLabel>Legend font</InputLabel>
+                  <Select
+                    label="Legend font"
+                    value={legendText.font}
+                    onChange={(e) => {
+                      var a = { ...legendText };
+                      a.font = e.target.value;
+                      setLegendText(a);
+                    }}
+                  >
+                    {vectorFontFamily.map((font, index) => (
+                      <MenuItem key={index} value={font}>
+                        {font}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              ) : null}
+              {boolLegend ? (
+                <Button
+                  variant="outlined"
+                  onClick={() =>
+                    setLegendText({ font: "Arial", size: 14, color: "black" })
+                  }
+                >
+                  Reset to default
+                </Button>
+              ) : null}
             </div>
           </Collapse>
         </div>
-        <div className="pieChartCanvasContainer">
+        <div className="canvasContainer">
           <PieChartCanvas
             ref={canvasRef}
             fieldsObejct={fields}
@@ -610,6 +688,7 @@ function PieChart() {
             boolCustomColors={boolCustomColors}
             canvasColor={canvasColor}
             titleText={titleText}
+            legendText={legendText}
             valuesText={valuesText}
             namesText={namesText}
             boolValueInside={boolValueInside}
@@ -619,7 +698,7 @@ function PieChart() {
           />
           <Button
             variant="contained"
-            className="myButton downloadButton"
+            className="downloadButton"
             onClick={() => {
               downloadCanvas();
             }}
@@ -627,7 +706,6 @@ function PieChart() {
             Download the Piechart now
           </Button>
         </div>
-      </div>
     </ThemeProvider>
   );
 }

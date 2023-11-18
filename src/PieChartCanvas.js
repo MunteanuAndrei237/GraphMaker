@@ -117,9 +117,10 @@ const PieChartCanvas =forwardRef((props, ref) => {
       ctx.fillText(element.pieName,nameX,nameY);
       }
     else
-    {
-      console.log(xPadding+pieChartXSize,yPadding,cubeSize,cubeSize)
+    {   
       ctx.fillRect(xPadding+pieChartXSize+canvasXSize*0.02,yPadding+element.index*30,cubeSize,cubeSize)
+      ctx.fillStyle = props.legendText.color;
+      ctx.font = props.legendText.size+"px "+ props.legendText.font;
       ctx.fillText(element.pieName,xPadding+pieChartXSize+cubeSize*1.25+canvasXSize*0.02,yPadding+element.index*30+Number(props.namesText.size));
     }
 

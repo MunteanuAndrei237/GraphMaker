@@ -1,0 +1,90 @@
+:root {
+    --barGraphFormItems: 32;
+    --itemColor: rgb(255, 222, 227);
+    --pieChartContainerColor: rgba(239, 239, 239);
+    --pieChartCanvasContainerColor: white;
+    --containerGradient1: pink;
+    --containerGradient2: magenta;
+}
+
+.bgNonTextOptions{
+    margin-top:2vh;
+    display: grid;
+    grid-template-columns: repeat(5, 22%);
+    gap: 3%;
+    align-items: start;
+}
+
+.bgFieldHeader{
+    display: inline-grid;
+    column-gap: 2vw;
+    grid-template-columns: repeat(auto-fill, 6vw);
+    justify-items: center;
+    align-items: center;
+    text-align: center;
+    padding: 1vh;
+    margin-bottom: 1vh;
+    grid-auto-flow: column;
+}
+.bgFieldHeader>*{
+    display: block;
+    min-width: 6vw !important;
+}
+.bgFieldsContainer{
+    display: inline-grid;
+    column-gap: 2vw;
+    grid-template-columns: repeat(auto-fill, 6vw);
+    justify-items: center;
+    align-items: center;
+    text-align: center;
+    background-color: var(--itemColor);
+    padding: 1vh;
+    grid-auto-flow: column;
+}
+.bgInputValue{
+    display: inline-grid;
+    column-gap: 2vw;
+    grid-template-columns: repeat(auto-fill, 6vw);
+    justify-items: center;
+    align-items: center;
+    text-align: center;
+    background-color: var(--itemColor);
+    padding: 1vh;
+    grid-auto-flow: column;
+    
+}
+
+.bgInputValue>*{
+    display: block;
+    min-width: 6vw !important;
+}
+
+.composedValuesHeaer{
+    display: inline-grid;
+    column-gap: 2vw;
+    grid-template-columns: repeat(auto-fill, 6vw);
+    justify-items: center;
+    align-items: center;
+    text-align: center;
+    padding: 1vh;
+    background-color: var(--itemColor);
+    margin-bottom: 1vh;
+    grid-auto-flow: column;
+    
+}
+.composedValuesHeaer>*{
+    min-width: 6vw;
+}
+
+.bgFieldsContainerContainer{
+    overflow: auto;
+    display: grid;
+    width: 90%;
+    max-height: 50vh;
+}
+.bgBarFontAndSize{
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    width: 100%;
+}

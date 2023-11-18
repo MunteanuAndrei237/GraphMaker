@@ -3,13 +3,13 @@ import GraphsContainer from './GraphsContainer.js';
 import { useState } from 'react';
 import './startPage.css';
 import { useRef } from 'react';
-
+import './graph.css';
 
 
 function StartPage()
 {
     const [graphsArray,setgraphsArray] = useState([]);
-    const [graphType,setgraphType] = useState('pieChart');
+    const [graphType,setgraphType] = useState('lineGraph');
     const selectRef = useRef(null);
     return (
         <div id="wholePage">

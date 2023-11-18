@@ -1,12 +1,9 @@
-import { useRef , useEffect} from "react";
+import { forwardRef , useEffect} from "react";
 
 
-function PieChartCanvas(props)
+const PieChartCanvas = forwardRef((props,ref) =>
 {
-    var myCanvas=useRef(null);
-
-    const draw = ctx => {
-        
+    const draw = ctx => { 
         var dimx=props.canvasSizeX;
         var dimy=props.canvasSizeY;
         var barGraphSizeX=dimx*0.7;
@@ -82,15 +79,12 @@ function PieChartCanvas(props)
 
             if(!props.boolComposedValues)
          props.fieldsObejct.forEach(element => {
-            console.log(barWidth)
             let startingX=paddingX+barWidth*(2*element.index-1);
             let lenghtX=barWidth;
             let lenghtY=(element.barGraphValue-minValue)/range*(barGraphSizeY);
             let startingY= paddingY + barGraphSizeY - lenghtY;
             if(props.boolCustomColors)
-                {ctx.fillStyle = element.barGraphCustomColor;
-                    console.log(element.barGraphCustomColor)
-                }
+                ctx.fillStyle = element.barGraphCustomColor;
             else
                 ctx.fillStyle = element.barGraphColor;
             ctx.fillRect(startingX,startingY,lenghtX,lenghtY);
@@ -142,10 +136,7 @@ function PieChartCanvas(props)
                 ctx.fillText(element.composedName, paddingX + barGraphSizeX + cubeSize + 3,paddingY+ (element.index-1)*cubeJump );
 
                 if(props.boolCustomColors)
-                {
                     ctx.fillStyle = element.composedCustomColor;
-                    console.log("esti bine");
-                }
                 else
                 ctx.fillStyle = element.composedColor;
 
@@ -159,7 +150,7 @@ function PieChartCanvas(props)
     
       useEffect(() => {
         
-        const canvas = myCanvas.current
+        const canvas = ref.current
         const context = canvas.getContext('2d')
         
         //Our draw come here
@@ -167,9 +158,8 @@ function PieChartCanvas(props)
       }, )//can comment [draw]
 
 
-    return (
-        <canvas height={props.canvasSizeY} width={props.canvasSizeX} ref= {myCanvas}></canvas>
-    )
-}
+    return <canvas height={props.canvasSizeY} width={props.canvasSizeX} ref= {ref}></canvas>
+    
+})
 
 export default PieChartCanvas;
