@@ -1,48 +1,66 @@
-.GraphContainer{
+:root {
+    --itemColor: rgb(255, 222, 227);
+    --graphContaienrColor: rgba(239, 239, 239);
+    --canvasContainerColor: white;
+    --containerGradient1: pink;
+    --containerGradient2: magenta;
+}
+.myInfo{
+    padding:0 !important;
+}
+.GraphContainer {
     display: grid;
     grid-template-columns: 47% 47%;
     justify-content: space-between;
     border: 1rem solid #aaaaff;
     border-image: repeating-linear-gradient(45deg, transparent, transparent 5px, #aaaaff 6px, #aaaaff 15px, transparent 16px, transparent 20px) 20/1rem;
-    background: var(--pieChartContainerColor);
+    background: var(--graphContaienrColor);
     height: 96vh;
     overflow: auto;
-    padding:1.4%;
-  }
-  .canvasContainer {
+    padding: 1.4%;
+}
+
+.canvasContainer {
     height: 90%;
     display: grid;
     align-items: center;
     justify-items: center;
-    background-color: var(--pieChartCanvasContainerColor);
+    background-color: var(--canvasContainerColor);
     border: 5px solid;
     border-image: linear-gradient(45deg, var(--containerGradient1), var(--containerGradient2)) 1;
     grid-template-rows: 90% 10%;
 }
-.titleInput{
+
+.titleInput {
     width: 50%;
 }
+
 .titleAndPalette {
     display: flex;
     justify-content: space-between;
     width: 90%;
     margin: 1vh;
+    align-items: center;
 }
-.optionSection{
+
+.optionSection {
     display: grid;
     row-gap: 1vh;
     justify-items: start;
 }
 
-.optionsContainer{
+.optionsContainer {
     margin-top: 1.5vh;
-  }
-.textOptions{
-display:grid;
-grid-template-columns: repeat(5,18%);
-gap: 2%;
-align-items: center;
 }
+
+.textOptions {
+    display: grid;
+    grid-template-columns: repeat(5, 18%);
+    column-gap: 2%;
+    row-gap: 1vh;
+    align-items: center;
+}
+
 .xInputAndColor {
     display: inline-grid;
     justify-items: center;
@@ -54,8 +72,64 @@ align-items: center;
     display: flex;
     flex-shrink: 0;
 }
+
 .xInputTrash {
     min-width: 1vw;
     position: relative;
     top: 10px;
+}
+
+.textHeader {
+    text-align: center;
+    padding: 3vh;
+}
+
+.fieldsContainer {
+    width: 90%;
+    overflow: auto;
+    display: grid;
+    max-height: 50vh;
+}
+
+.inputValues {
+    display: grid;
+    row-gap: 2vh;
+}
+
+.myAdd {
+    margin-left: 3px;
+}
+
+.showOptions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media only screen and (max-width: 767px) {
+    .GraphContainer {
+        grid-template-columns: 100%;
+        border-image: repeating-linear-gradient(45deg, transparent, transparent 5px, #aaaaff 6px, #aaaaff 15px, transparent 16px, transparent 20px) 20/0.5rem;
+        width: 100vw;
+    }
+.myCheckbox{
+    padding-right: 0 !important;
+
+}
+.myLabel{
+    margin: 0;
+}
+.optionSection{
+    row-gap: 2vh;
+}
+.xInputTrash{
+    top:0px;
+}
+.myAdd{
+    height:1rem ;
+}
+.canvasContainer{
+    margin-top: 2vh;
+    height: 50vh;
+}
 }

@@ -1,28 +1,24 @@
 :root{
     --chartFormSize : 36;
-    --itemColor:rgb(255, 222, 227);
-    --pieChartContainerColor:rgba(239, 239, 239);
-    --pieChartCanvasContainerColor:white;
-    --containerGradient1:pink;
-    --containerGradient2:magenta;
 }
 
 .tableItem{
     display: grid !important;
     justify-items: center;
     align-items: center;
-    grid-template-columns: repeat(calc(var(--chartFormSize)/9), 9vw);
+    grid-template-columns: repeat(calc(var(--chartFormSize)/9), 7vw);
     background-color: var(--itemColor);
-    max-width: fit-content;
+    column-gap: 2vw;
   }
 
   .tableHeader{
     display: grid;
     justify-items: center;
     align-items: center;
-    grid-template-columns: repeat( calc(var(--chartFormSize)/9), 9vw);
+    grid-template-columns: repeat( calc(var(--chartFormSize)/9), 7vw);
     margin-top: 1%;
     margin-bottom: 1%;
+    column-gap: 2.2vw;
   }
 
   .optionsFlex{
@@ -37,6 +33,36 @@
     display: grid;
     row-gap: 2vh;
   }
+  @media only screen and (max-width: 767px) {
+    .fieldsContainer{
+      width: auto;
+    }
+.tableItem{
+    display: grid !important;
+    justify-items: center;
+    align-items: center;
+    grid-template-columns: repeat(calc(var(--chartFormSize)/9), 16vw);
+    background-color: var(--itemColor);
+    column-gap: 3vw;
+  }
 
+  .tableHeader{
+    display: grid;
+    justify-items: center;
+    align-items: center;
+    grid-template-columns: repeat( calc(var(--chartFormSize)/9), 16vw);
+    margin-top: 1%;
+    margin-bottom: 1%;
+    column-gap: 5vw;
+  }
+  .optionSection
+  {
+row-gap: 0px;
+  }
+  .fieldsContainer{
+
+    row-gap: 1vh;
+  }
+  }
 
 

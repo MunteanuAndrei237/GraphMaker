@@ -25,7 +25,7 @@ const LineGraphCanvas = forwardRef((props, ref) => {
       });
     });
 
-    if (props.customMin !== null) minValue = props.customMin;
+    if (props.customMin !== null && props.customMin !== undefined) minValue = props.customMin;
     else {
       props.fieldsObejct.forEach((array) => {
         array.lineGraphYValues.forEach((element) => {
@@ -33,7 +33,7 @@ const LineGraphCanvas = forwardRef((props, ref) => {
         });
       });
     }
-    if (props.customMax !== null) maxValue = props.customMax;
+    if (props.customMax !== null && props.customMax !== undefined) maxValue = props.customMax;
     else {
       props.fieldsObejct.forEach((array) => {
         array.lineGraphYValues.forEach((element) => {

@@ -3,6 +3,7 @@ import { CgAddR } from "react-icons/cg";
 import { FaTrash } from "react-icons/fa";
 import { IoIosArrowDown } from "react-icons/io";
 import { ThemeProvider } from "@emotion/react";
+import InfoIcon from "@material-ui/icons/Info";
 
 import LineGraphCanvas from "./LineGraphCanvas.js";
 import "./lineGraph.css";
@@ -19,6 +20,8 @@ import {
   MenuItem,
   InputAdornment,
   Collapse,
+  Tooltip,
+  IconButton,
 } from "@mui/material";
 import { MuiColorInput } from "mui-color-input";
 
@@ -30,12 +33,16 @@ const vectorFontFamily = utilitiesData.vectorFontFamily;
 const vectorFontSizes = utilitiesData.vectorFontSizes;
 
 function LineGraph() {
+  window.addEventListener("resize", () => {
+    if (document.body.clientWidth > 767)
+      setCanvasSizeX(document.body.clientWidth * 0.42);
+    else setCanvasSizeX(document.body.clientWidth * 0.9);
+    setCanvasSizeY(document.body.clientHeight * 0.4);
+  });
+
   const [colorPalette, setColorPalette] = useState(vectorColorPalettes[0]);
   const [theme, setTheme] = useState(PinkAndWhiteTheme);
   const canvasRef = useRef();
-
-  var minRef = useRef(null);
-  var maxRef = useRef(null);
 
   var globalMin = 21;
   var globalMax = 56;
@@ -85,7 +92,7 @@ function LineGraph() {
         newStateC[indexC][keyC] = valueC;
         return newStateC;
       case "number":
-        const { indexN, keyN, valueN ,valueN2} = action.payload;
+        const { indexN, keyN, valueN, valueN2 } = action.payload;
         const newStateN = [...state];
         if (!isNaN(Number(valueN))) {
           newStateN[indexN][keyN][valueN2] = Number(valueN);
@@ -120,7 +127,8 @@ function LineGraph() {
     }
   }
   const [fields, fieldsDispatch] = useReducer(fieldsReducer, initialFields);
-  
+  const [unusedMin, setUnusedMin] = useState("");
+  const [unusedMax, setUnusedMax] = useState("");
 
   const [boolDisplayXLines, setBoolDisplayXLines] = useState(true);
   const [boolDisplayYLines, setBoolDisplayYLines] = useState(false);
@@ -129,8 +137,15 @@ function LineGraph() {
   const [boolDisplayLines, setBoolDisplayLines] = useState(false);
   const [boolDisplayOptions, setBoolDisplayOptions] = useState(false);
 
-  const [canvasSizeX, setCanvasSizeX] = useState(600);
-  const [canvasSizeY, setCanvasSizeY] = useState(300);
+  const [canvasSizeX, setCanvasSizeX] = useState(
+    document.body.clientWidth > 767
+      ? document.body.clientWidth * 0.42
+      : document.body.clientWidth * 0.9
+  );
+
+  const [canvasSizeY, setCanvasSizeY] = useState(
+    document.body.clientHeight * 0.4
+  );
   const [canvasColor, setCanvasColor] = useState("white");
   const [xName, setXName] = useState("Year");
   const [yName, setYName] = useState("Platform");
@@ -140,22 +155,26 @@ function LineGraph() {
   );
   const [xValuesText, setXValuesText] = useState({
     font: "Arial",
-    size: 12,
+    size:  document.body.clientWidth > 767
+    ?12 : 8,
     color: "black",
   });
   const [yValuesText, setYValuesText] = useState({
     font: "Arial",
-    size: 12,
+    size:  document.body.clientWidth > 767
+    ?12 : 8,
     color: "black",
   });
   const [scalesText, setScalesText] = useState({
     font: "Arial",
-    size: 12,
+    size:  document.body.clientWidth > 767
+    ?12 : 8,
     color: "black",
   });
   const [titleText, setTitleText] = useState({
     font: "Arial",
-    size: 32,
+    size:  document.body.clientWidth > 767
+    ?32 : 18,
     color: "black",
   });
 
@@ -192,11 +211,19 @@ function LineGraph() {
     fields.forEach((element) => {
       fieldsDispatch({
         type: "change",
-        payload: { indexC: element.index - 1, keyC: "lineGraphColor", valueC: newColorPalette.vectorFillColors[element.index] },
+        payload: {
+          indexC: element.index - 1,
+          keyC: "lineGraphColor",
+          valueC: newColorPalette.vectorFillColors[element.index],
+        },
       });
       fieldsDispatch({
         type: "change",
-        payload: { indexC: element.index - 1, keyC: "lineGraphCustomColor", valueC: newColorPalette.vectorFillColors[element.index] },
+        payload: {
+          indexC: element.index - 1,
+          keyC: "lineGraphCustomColor",
+          valueC: newColorPalette.vectorFillColors[element.index],
+        },
       });
     });
 
@@ -214,7 +241,7 @@ function LineGraph() {
     }
     if (!isNaN(Number(e.target.value)) && Number(e.target.value) >= globalMax) {
       setCustomMax(Number(e.target.value));
-    } else alert("Choose a number greater than " + globalMax);
+    } else setCustomMax(undefined);
   }
 
   function handleMin(e) {
@@ -224,9 +251,8 @@ function LineGraph() {
     }
     if (!isNaN(Number(e.target.value)) && Number(e.target.value) <= globalMin) {
       setCustomMin(Number(e.target.value));
-    } else alert("Choose a number smaller than " + globalMin);
+    } else setCustomMin(undefined);
   }
-
 
   const createNewField = () => {
     document.documentElement.style.setProperty(
@@ -276,590 +302,683 @@ function LineGraph() {
 
   return (
     <ThemeProvider theme={theme}>
-        <div className="lineGraphForm">
-          <h2>Graph Details</h2>
-          <div className="titleAndPalette">
-            <TextField
-              className="titleInput"
-              label="Title"
-              value={lineGraphTitle}
-              onChange={(e) => setLineGraphTitle(e.target.value)}
-            ></TextField>
-            <FormControl>
-              <InputLabel>Color pallette</InputLabel>
-              <Select
-                label="colorPalette"
-                value={colorPalette.name}
+      <div className="lineGraphForm">
+        <h2>Graph Details</h2>
+        <div className="titleAndPalette">
+          <TextField
+          size={document.body.clientWidth > 767 ? "medium" : "small"}
+            className="titleInput"
+            label="Title"
+            value={lineGraphTitle}
+            onChange={(e) => setLineGraphTitle(e.target.value)}
+          ></TextField>
+          <FormControl>
+            <InputLabel>Color pallette</InputLabel>
+            <Select
+            size={document.body.clientWidth > 767 ? "medium" : "small"}
+              label="colorPalette"
+              value={colorPalette.name}
+              onChange={(e) => {
+                changeColorPalette(
+                  vectorColorPalettes.find((obj) => obj.name === e.target.value)
+                );
+              }}
+            >
+              {vectorColorPalettes.map((cp) => (
+                <MenuItem key={cp.index} value={cp.name}>
+                  {cp.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </div>
+        <div className="fieldsContainer">
+          <div className="inputValue">
+            <div className="lgTopRightcorner">
+
+            
+              <div className="diagonalSeparator"></div>
+            </div>
+            {fields.map((field) => (
+              <div key={field.index} className="xInput">
+                <div className="xInputAndColor">
+                  <Input
+                    placeholder="Trend line name"
+                    value={field.lineGraphName}
+                    onChange={(e) =>
+                      fieldsDispatch({
+                        type: "change",
+                        payload: {
+                          indexC: field.index - 1,
+                          keyC: "lineGraphName",
+                          valueC: e.target.value,
+                        },
+                      })
+                    }
+                  />
+                  {boolCustomColors ? (
+                    <MuiColorInput
+                    size={document.body.clientWidth > 767 ? "medium" : "small"}
+                      label="Line color"
+                      value={field.lineGraphCustomColor}
+                      onChange={(newValue) =>
+                        fieldsDispatch({
+                          type: "change",
+                          payload: {
+                            indexC: field.index - 1,
+                            keyC: "lineGraphCustomColor",
+                            valueC: newValue,
+                          },
+                        })
+                      }
+                    />
+                  ) : null}
+                </div>
+                <FaTrash
+                  className="xInputTrash"
+                  onClick={() =>
+                    fields.length !== 1 ? deleteField(field.index) : null
+                  }
+                />
+              </div>
+            ))}
+            <CgAddR onClick={() => createNewField()} />
+          </div>
+
+          <div className="inputValues">
+            {xValues.map((xValue, index) => (
+              <div key={index} className="inputValue">
+                <Input
+                
+                  placeholder="Interval marker"
+                  value={xValue}
+                  onChange={(e) => {
+                    var a = [...xValues];
+                    a[index] = Number(e.target.value);
+                    setXValues(a);
+                  }}
+                />
+                {fields.map((field) => (
+                  <TextField
+                  size={document.body.clientWidth > 767 ? "medium" : "small"}
+                    value={field.lineGraphYValues[index]}
+                    onChange={(e) =>
+                      fieldsDispatch({
+                        type: "number",
+                        payload: {
+                          indexN: field.index - 1,
+                          keyN: "lineGraphYValues",
+                          valueN: e.target.value,
+                          valueN2: index,
+                        },
+                      })
+                    }
+                    key={field.index}
+                  />
+                ))}
+                <FaTrash
+                  onClick={() =>
+                    xValues.length !== 2 ? deleteXValue(index) : null
+                  }
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="titleAndPalette">
+          <div>
+            <p style={{ display: "inline" }}>Add trend line</p>
+            <CgAddR className="myAdd" onClick={() => createXValue()} />
+          </div>
+          <FormControlLabel
+            className="myLabel"
+            control={
+              <Checkbox
+                className="myCheckbox"
+                checked={boolCustomColors}
+                onChange={() => {
+                  setBoolCustomColors(!boolCustomColors);
+                }}
+              />
+            }
+            label="Custom colors"
+          />
+        </div>
+        <div
+          className="showOptions"
+          onClick={() => setBoolDisplayOptions(!boolDisplayOptions)}
+        >
+          <div>
+            <p style={{display:"inline"}}>Show options</p> <IoIosArrowDown className="myAdd"/>
+          </div>
+        </div>
+        <Collapse in={boolDisplayOptions} className="optionsContainer">
+          <div className="lgNonTextOptions">
+            <div className="optionSection">
+              <h4>Canvas options</h4>
+              <TextField
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                label="Canvas width"
+                value={canvasSizeX}
                 onChange={(e) => {
-                  changeColorPalette(
-                    vectorColorPalettes.find(
-                      (obj) => obj.name === e.target.value
-                    )
-                  );
+                  setCanvasSizeX(e.target.value);
+                }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">px</InputAdornment>
+                  ),
+                }}
+              />
+              <TextField
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                label="Canvas height"
+                value={canvasSizeY}
+                onChange={(e) => {
+                  setCanvasSizeY(e.target.value);
+                }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">px</InputAdornment>
+                  ),
+                }}
+              />
+              <MuiColorInput
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                label="Canvas color"
+                value={canvasColor}
+                onChange={(newValue) => setCanvasColor(newValue)}
+              />
+              <Button
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                variant="outlined"
+                onClick={() => {
+                  if (document.body.clientWidth > 767)
+                    setCanvasSizeX(document.body.clientWidth * 0.42);
+                  else setCanvasSizeX(document.body.clientWidth * 0.9);
+                  setCanvasSizeY(document.body.clientHeight * 0.4);
                 }}
               >
-                {vectorColorPalettes.map((cp) => (
-                  <MenuItem key={cp.index} value={cp.name}>
-                    {cp.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </div>
-          <div className="lgFieldsContainer">
-            <div className="legendValues">
-              <div className="lgTopRightcorner">
-                <Input
-                  className="lgTopRightcornerInput1"
-                  value={xName}
-                  onChange={(e) => {
-                    setXName(e.target.value);
-                  }}
-                />
-                <Input
-                  className="lgTopRightcornerInput2"
-                  value={yName}
-                  onChange={(e) => {
-                    setYName(e.target.value);
-                  }}
-                />
-                <div className="diagonalSeparator"></div>
-              </div>
-              {fields.map((field) => (
-                <div key={field.index} className="xInput">
-                  <div className="xInputAndColor">
-                    <Input
-                      placeholder="Trend line name"
-                      value={field.lineGraphName}
-                      onChange={(e) =>
-                        fieldsDispatch({type: "change", payload: { indexC: field.index - 1, keyC: "lineGraphName", valueC: e.target.value }})
-                      }
-                    />
-                    {boolCustomColors ? (
-                      <MuiColorInput
-                        label="Line color"
-                        value={field.lineGraphCustomColor}
-                        onChange={(newValue) =>
-                          fieldsDispatch({type: "change", payload: { indexC: field.index - 1, keyC: "lineGraphCustomColor", valueC: newValue }})
-                        }
-                      />
-                    ) : null}
-                  </div>
-                  <FaTrash
-                    className="xInputTrash"
-                    onClick={() =>
-                      fields.length !== 1 ? deleteField(field.index) : null
-                    }
-                  />
-                </div>
-              ))}
-              <CgAddR onClick={() => createNewField()} />
+                Resize to normal
+              </Button>
             </div>
-
-            <div className="inputValues">
-              {xValues.map((xValue, index) => (
-                <div key={index} className="inputValue">
-                  <Input
-                    placeholder="Interval marker"
-                    className="lineGraphXValue"
-                    value={xValue}
-                    onChange={(e) => {
-                      var a = [...xValues];
-                      a[index] = Number(e.target.value);
-                      setXValues(a);
-                    }}
+            <div className="optionSection">
+              <h4>Grid options</h4>
+              <FormControlLabel
+                className="myLabel"
+                control={
+                  <Checkbox
+                    className="myCheckbox"
+                    checked={boolDisplayXLines}
+                    onChange={() => setBoolDisplayXLines(!boolDisplayXLines)}
                   />
-                  {fields.map((field) => (
-                    <TextField
-                      className="lineGraphYValue"
-                      value={field.lineGraphYValues[index]}
-                      onChange={(e) =>
-                        fieldsDispatch({type: "number", payload: { indexN: field.index - 1, keyN: "lineGraphYValues", valueN: e.target.value , valueN2 : index}})
-                      }
-                      key={field.index}
-                    />
-                  ))}
-                  <FaTrash
-                    onClick={() =>
-                      xValues.length !== 2 ? deleteXValue(index) : null
-                    }
+                }
+                label="Show horizontal lines"
+              />
+              <FormControlLabel
+                checked={boolDisplayYLines}
+                className="myLabel"
+                control={
+                  <Checkbox
+                    className="myCheckbox"
+                    checked={boolDisplayYLines}
+                    onChange={() => setBoolDisplayYLines(!boolDisplayYLines)}
                   />
-                </div>
-              ))}
+                }
+                label="Show vertical lines"
+              />
+              <MuiColorInput
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                disabled={!boolDisplayXLines && !boolDisplayYLines}
+                label="Grid color"
+                value={grid.color}
+                onChange={(newValue) => {
+                  var a = { ...grid };
+                  a.color = newValue;
+                  setGrid(a);
+                }}
+              />
+              <TextField
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                disabled={!boolDisplayXLines && !boolDisplayYLines}
+                label="Grid width"
+                value={grid.size}
+                onChange={(e) => {
+                  var a = { ...grid };
+                  a.size = e.target.value;
+                  if (!isNaN(Number(e.target.value))) setGrid(a);
+                }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">px</InputAdornment>
+                  ),
+                }}
+              />
+              <Button
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                disabled={!boolDisplayXLines && !boolDisplayYLines}
+                variant="outlined"
+                onClick={() => setGrid({ size: 1, color: "grey" })}
+              >
+                Reset to default
+              </Button>
             </div>
-          </div>
-
-          <div className="titleAndPalette">
-            <div>
-              Add new item
-              <CgAddR onClick={() => createXValue()} />
-            </div>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={boolCustomColors}
-                  onChange={() => {
-                    setBoolCustomColors(!boolCustomColors);
-                  }}
-                />
-              }
-              label="Custom colors"
-            />
-          </div>
-          <div onClick={() => setBoolDisplayOptions(!boolDisplayOptions)}>
-            Show options <IoIosArrowDown />
-          </div>
-          <Collapse in={boolDisplayOptions} className="optionsContainer">
-            <div className="lgNonTextOptions">
-              <div className="optionSection">
-                <h4>Canvas options</h4>
-                <TextField
-                  label="Canvas width"
-                  value={canvasSizeX}
-                  onChange={(e) => {
-                    setCanvasSizeX(e.target.value);
-                  }}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">px</InputAdornment>
-                    ),
-                  }}
-                />
-                <TextField
-                  label="Canvas height"
-                  value={canvasSizeY}
-                  onChange={(e) => {
-                    setCanvasSizeY(e.target.value);
-                  }}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">px</InputAdornment>
-                    ),
-                  }}
-                />
-                <MuiColorInput
-                  label="Canvas color"
-                  value={canvasColor}
-                  onChange={(newValue) => setCanvasColor(newValue)}
-                />
-                <Button
-                  variant="outlined"
-                  onClick={() => {
-                    setCanvasSizeX(600);
-                    setCanvasSizeY(300);
-                  }}
-                >
-                  Resize to normal
-                </Button>
-              </div>
-              <div className="optionSection">
-                <h4>Grid options</h4>
+            <div className="optionSection">
+              <h4>Axis options</h4>
+              <TextField
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                label="Horizontal Axis Label"
+                value={xName}
+                onChange={(e) => {
+                  setXName(e.target.value);
+                }}
+              />
+              <TextField
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                label="Vertical Axis Label"
+                value={yName}
+                onChange={(e) => {
+                  setYName(e.target.value);
+                }}
+              />
+              <FormControlLabel
+                className="myLabel"
+                control={
+                  <Checkbox
+                    className="myCheckbox"
+                    checked={boolDisplayNames}
+                    onChange={() => setBoolDisplayNames(!boolDisplayNames)}
+                  />
+                }
+                label="Show labels"
+              />
+              <div style={{display:"flex"}}>
                 <FormControlLabel
+                  className="myLabel"
                   control={
                     <Checkbox
-                      checked={boolDisplayXLines}
-                      onChange={() => setBoolDisplayXLines(!boolDisplayXLines)}
-                    />
-                  }
-                  label="Show horizontal lines"
-                />
-                <FormControlLabel
-                  checked={boolDisplayYLines}
-                  control={
-                    <Checkbox
-                      checked={boolDisplayYLines}
-                      onChange={() => setBoolDisplayYLines(!boolDisplayYLines)}
-                    />
-                  }
-                  label="Show vertical lines"
-                />
-                <MuiColorInput
-                  label="Grid color"
-                  value={grid.color}
-                  onChange={(newValue) => {
-                    var a = { ...grid };
-                    a.color = newValue;
-                    setGrid(a);
-                  }}
-                />
-                <TextField
-                  label="Grid width"
-                  value={grid.size}
-                  onChange={(e) => {
-                    var a = { ...grid };
-                    a.size = e.target.value;
-                    if (!isNaN(Number(e.target.value))) setGrid(a);
-                  }}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">px</InputAdornment>
-                    ),
-                  }}
-                />
-                <Button
-                  variant="outlined"
-                  onClick={() => setGrid({ size: 1, color: "grey" })}
-                >
-                  Reset to default
-                </Button>
-              </div>
-              <div className="optionSection">
-                <h4>Axis options</h4>
-                <TextField
-                  label="Horizontal Axis Label"
-                  value={xName}
-                  onChange={(e) => {
-                    setXName(e.target.value);
-                  }}
-                />
-                <TextField
-                  label="Vertical Axis Label"
-                  value={yName}
-                  onChange={(e) => {
-                    setYName(e.target.value);
-                  }}
-                />
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={boolDisplayNames}
-                      onChange={() => setBoolDisplayNames(!boolDisplayNames)}
-                    />
-                  }
-                  label="Show labels"
-                />
-                <FormControlLabel
-                  control={
-                    <Checkbox
+                      className="myCheckbox"
                       checked={boolDisplayLines}
                       onChange={() => setBoolDisplayLines(!boolDisplayLines)}
                     />
                   }
                   label="Show axes"
                 />
-              </div>
-              <div className="optionSection">
-                <h4>Trend line options</h4>
-                <TextField
-                  label="Line width"
-                  value={line.size}
-                  onChange={(e) => {
-                    var a = { ...line };
-                    a.size = e.target.value;
-                    if (!isNaN(Number(e.target.value))) setLine(a);
-                  }}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">px</InputAdornment>
-                    ),
-                  }}
-                />
-                <TextField
-                  label="Marker radius"
-                  value={line.pointSize}
-                  onChange={(e) => {
-                    var a = { ...line };
-                    a.pointSize = e.target.value;
-                    if (!isNaN(Number(e.target.value))) setLine(a);
-                  }}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">px</InputAdornment>
-                    ),
-                  }}
-                />
-                <Button
-                  variant="outlined"
-                  onClick={() => setLine({ pointSize: 4, size: 4 })}
-                >
-                  Reset to default
-                </Button>
-              </div>
-              <div className="optionSection">
-                <h4>Custom range</h4>
-                <TextField
-                  label="Lowest value"
-                  ref={minRef}
-                  onBlur={(e) => handleMin(e)}
-                />
-                <TextField
-                  label="Highest value"
-                  ref={maxRef}
-                  onBlur={(e) => handleMax(e)}
-                />
-                <Button
-                  variant="outlined"
-                  onClick={() => {
-                    setCustomMax(null);
-                    setCustomMin(null);
-                    minRef.current.value = null;
-                    maxRef.current.value = null;
-                  }}
-                >
-                  Delete custom values
-                </Button>
+                <Tooltip title="Show otrogonal axes (axes that go trhough the origin)">
+                  <IconButton className="myInfo">
+                    <InfoIcon />
+                  </IconButton>
+                </Tooltip>
               </div>
             </div>
-            <div className="lgTextHeader">
-              <h2>Text options</h2>
+            <div className="optionSection">
+              <h4>Trend line options</h4>
+              <TextField
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                label="Line width"
+                value={line.size}
+                onChange={(e) => {
+                  var a = { ...line };
+                  a.size = e.target.value;
+                  if (!isNaN(Number(e.target.value))) setLine(a);
+                }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">px</InputAdornment>
+                  ),
+                }}
+              />
+              <TextField
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                label="Point size"
+                value={line.pointSize}
+                onChange={(e) => {
+                  var a = { ...line };
+                  a.pointSize = e.target.value;
+                  if (!isNaN(Number(e.target.value))) setLine(a);
+                }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">px</InputAdornment>
+                  ),
+                }}
+              />
+              <Button
+               size={document.body.clientWidth > 767 ? "medium" : "small"}
+                variant="outlined"
+                onClick={() => setLine({ pointSize: 4, size: 4 })}
+              >
+                Reset to default
+              </Button>
             </div>
-            <div className="textOptions">
-              <p>Horizontal values</p>
-              <MuiColorInput
-                label="Horizontal values color"
-                value={xValuesText.color}
-                onChange={(newValue) => {
+            <div className="optionSection">
+              <h4 style={{display:"flex"}}>
+                Custom range
+                <Tooltip title="Ensure that the highest boundary exceeds the bar values and the lowest boundary falls below the lowest bar value. This practice is strongly discouraged and may lead to unexpected behavior.">
+                  <IconButton className="myInfo">
+                    <InfoIcon />
+                  </IconButton>
+                </Tooltip>
+              </h4>
+              <TextField
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                error={customMin === undefined}
+                helperText={
+                  customMin === undefined
+                    ? "Please select a value lower than" + globalMin
+                    : null
+                }
+                value={unusedMin}
+                onChange={(e) => setUnusedMin(e.target.value)}
+                label="Lowest value"
+                onBlur={(e) => handleMin(e)}
+              />
+              <TextField
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                value={unusedMax}
+                error={customMax === undefined}
+                helperText={
+                  customMax === undefined
+                    ? "Please select a value higher than" + globalMax
+                    : null
+                }
+                onChange={(e) => setUnusedMax(e.target.value)}
+                label="Highest value"
+                onBlur={(e) => handleMax(e)}
+              />
+              <Button
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                variant="outlined"
+                onClick={() => {
+                  setCustomMax(null);
+                  setCustomMin(null);
+                  setUnusedMax("");
+                  setUnusedMin("");
+                }}
+              >
+                Delete custom values
+              </Button>
+            </div>
+          </div>
+          <div className="textHeader">
+            <h2>Text options</h2>
+          </div>
+          <div className="textOptions">
+            <p>Horizontal values</p>
+            <MuiColorInput
+            size={document.body.clientWidth > 767 ? "medium" : "small"}
+              label="Horizontal values color"
+              value={xValuesText.color}
+              onChange={(newValue) => {
+                var a = { ...xValuesText };
+                a.color = newValue;
+                setXValuesText(a);
+              }}
+            />
+            <FormControl>
+              <InputLabel>Horizontal values size</InputLabel>
+              <Select
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                label="Horizontal values size"
+                value={xValuesText.size}
+                onChange={(e) => {
                   var a = { ...xValuesText };
-                  a.color = newValue;
+                  a.size = e.target.value;
                   setXValuesText(a);
                 }}
-              />
-              <FormControl>
-                <InputLabel>Horizontal values size</InputLabel>
-                <Select
-                  label="Horizontal values size"
-                  value={xValuesText.size}
-                  onChange={(e) => {
-                    var a = { ...xValuesText };
-                    a.size = e.target.value;
-                    setXValuesText(a);
-                  }}
-                >
-                  {vectorFontSizes.map((size, index) => (
-                    <MenuItem key={index} value={size}>
-                      {size}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <FormControl>
-                <InputLabel>Horizontal values font</InputLabel>
-                <Select
-                  label="Horizontal values font"
-                  value={xValuesText.font}
-                  onChange={(e) => {
-                    var a = { ...xValuesText };
-                    a.font = e.target.value;
-                    setXValuesText(a);
-                  }}
-                >
-                  {vectorFontFamily.map((font, index) => (
-                    <MenuItem key={index} value={font}>
-                      {font}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <Button
-                variant="outlined"
-                onClick={() =>
-                  setXValuesText({ font: "Arial", size: 12, color: "black" })
-                }
               >
-                Reset to default
-              </Button>
-              <p>Vertical values</p>
-              <MuiColorInput
-                label="Vertical values color"
-                value={yValuesText.color}
-                onChange={(newValue) => {
+                {vectorFontSizes.map((size, index) => (
+                  <MenuItem key={index} value={size}>
+                    {size}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl>
+              <InputLabel>Horizontal values font</InputLabel>
+              <Select
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                label="Horizontal values font"
+                value={xValuesText.font}
+                onChange={(e) => {
+                  var a = { ...xValuesText };
+                  a.font = e.target.value;
+                  setXValuesText(a);
+                }}
+              >
+                {vectorFontFamily.map((font, index) => (
+                  <MenuItem key={index} value={font}>
+                    {font}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <Button
+            size={document.body.clientWidth > 767 ? "medium" : "small"}
+              variant="outlined"
+              onClick={() =>
+                setXValuesText({ font: "Arial", size:   document.body.clientWidth > 767 ?12 : 8, color: "black" })
+              }
+            >
+              Reset to default
+            </Button>
+            <p>Vertical values</p>
+            <MuiColorInput
+            size={document.body.clientWidth > 767 ? "medium" : "small"}
+              label="Vertical values color"
+              value={yValuesText.color}
+              onChange={(newValue) => {
+                var a = { ...yValuesText };
+                a.color = newValue;
+                setYValuesText(a);
+              }}
+            />
+            <FormControl>
+              <InputLabel>Vertical values size</InputLabel>
+              <Select
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                label="Vertical values font"
+                value={yValuesText.size}
+                onChange={(e) => {
                   var a = { ...yValuesText };
-                  a.color = newValue;
+                  a.size = e.target.value;
                   setYValuesText(a);
                 }}
-              />
-              <FormControl>
-                <InputLabel>Vertical values size</InputLabel>
-                <Select
-                  label="Vertical values font"
-                  value={yValuesText.size}
-                  onChange={(e) => {
-                    var a = { ...yValuesText };
-                    a.size = e.target.value;
-                    setYValuesText(a);
-                  }}
-                >
-                  {vectorFontSizes.map((size, index) => (
-                    <MenuItem key={index} value={size}>
-                      {size}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <FormControl>
-                <InputLabel>Vertical values font</InputLabel>
-                <Select
-                  label="Vertical values font"
-                  value={yValuesText.font}
-                  onChange={(e) => {
-                    var a = { ...yValuesText };
-                    a.font = e.target.value;
-                    setYValuesText(a);
-                  }}
-                >
-                  {vectorFontFamily.map((font, index) => (
-                    <MenuItem key={index} value={font}>
-                      {font}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <Button
-                variant="outlined"
-                onClick={() =>
-                  setYValuesText({ font: "Arial", size: 12, color: "black" })
-                }
               >
-                Reset to default
-              </Button>
-              Scales
-              <MuiColorInput
-                label="scales color"
-                value={scalesText.color}
-                onChange={(newValue) => {
+                {vectorFontSizes.map((size, index) => (
+                  <MenuItem key={index} value={size}>
+                    {size}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl>
+              <InputLabel>Vertical values font</InputLabel>
+              <Select
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                label="Vertical values font"
+                value={yValuesText.font}
+                onChange={(e) => {
+                  var a = { ...yValuesText };
+                  a.font = e.target.value;
+                  setYValuesText(a);
+                }}
+              >
+                {vectorFontFamily.map((font, index) => (
+                  <MenuItem key={index} value={font}>
+                    {font}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <Button
+            size={document.body.clientWidth > 767 ? "medium" : "small"}
+              variant="outlined"
+              onClick={() =>
+                setYValuesText({ font: "Arial", size:  document.body.clientWidth > 767
+                ?12 : 8, color: "black" })
+              }
+            >
+              Reset to default
+            </Button>
+            <p>Scales</p>
+            <MuiColorInput
+            size={document.body.clientWidth > 767 ? "medium" : "small"}
+              label="scales color"
+              value={scalesText.color}
+              onChange={(newValue) => {
+                var a = { ...scalesText };
+                a.color = newValue;
+                setScalesText(a);
+              }}
+            />
+            <FormControl>
+              <InputLabel>Scales size</InputLabel>
+
+              <Select
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                label="Scales size"
+                value={scalesText.size}
+                onChange={(e) => {
                   var a = { ...scalesText };
-                  a.color = newValue;
+                  a.size = e.target.value;
+                  if (!isNaN(Number(e.target.value))) setScalesText(a);
+                }}
+              >
+                {vectorFontSizes.map((size, index) => (
+                  <MenuItem key={index} value={size}>
+                    {size}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl>
+              <InputLabel>Scales font</InputLabel>
+              <Select
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                label="Scales font"
+                value={scalesText.font}
+                onChange={(e) => {
+                  var a = { ...scalesText };
+                  a.font = e.target.value;
                   setScalesText(a);
                 }}
-              />
-              <FormControl>
-                <InputLabel>Scales size</InputLabel>
-
-                <Select
-                  label="Scales size"
-                  value={scalesText.size}
-                  onChange={(e) => {
-                    var a = { ...scalesText };
-                    a.size = e.target.value;
-                    if (!isNaN(Number(e.target.value))) setScalesText(a);
-                  }}
-                >
-                  {vectorFontSizes.map((size, index) => (
-                    <MenuItem key={index} value={size}>
-                      {size}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <FormControl>
-                <InputLabel>Scales font</InputLabel>
-                <Select
-                  label="Scales font"
-                  value={scalesText.font}
-                  onChange={(e) => {
-                    var a = { ...scalesText };
-                    a.font = e.target.value;
-                    setScalesText(a);
-                  }}
-                >
-                  {vectorFontFamily.map((font, index) => (
-                    <MenuItem key={index} value={font}>
-                      {font}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <Button
-                variant="outlined"
-                onClick={() =>
-                  setScalesText({ font: "Arial", size: 12, color: "black" })
-                }
               >
-                Reset to default
-              </Button>
-              <p>Title</p>
-              <MuiColorInput
-                label="title color"
-                value={titleText.color}
-                onChange={(newValue) => {
+                {vectorFontFamily.map((font, index) => (
+                  <MenuItem key={index} value={font}>
+                    {font}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <Button
+            size={document.body.clientWidth > 767 ? "medium" : "small"}
+              variant="outlined"
+              onClick={() =>
+                setScalesText({ font: "Arial", size:  document.body.clientWidth > 767
+                ?12 : 8, color: "black" })
+              }
+            >
+              Reset to default
+            </Button>
+            <p>Title</p>
+            <MuiColorInput
+            size={document.body.clientWidth > 767 ? "medium" : "small"}
+              label="title color"
+              value={titleText.color}
+              onChange={(newValue) => {
+                var a = { ...titleText };
+                a.color = newValue;
+                setTitleText(a);
+              }}
+            />
+            <FormControl>
+              <InputLabel>Title size</InputLabel>
+              <Select
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                label="Title size"
+                value={titleText.size}
+                onChange={(e) => {
                   var a = { ...titleText };
-                  a.color = newValue;
+                  a.size = e.target.value;
+                  if (!isNaN(Number(e.target.value))) setTitleText(a);
+                }}
+              >
+                {vectorFontSizes.map((size, index) => (
+                  <MenuItem key={index} value={size}>
+                    {size}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl>
+              <InputLabel>Title font</InputLabel>
+              <Select
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                label="Title font"
+                value={titleText.font}
+                onChange={(e) => {
+                  var a = { ...titleText };
+                  a.font = e.target.value;
                   setTitleText(a);
                 }}
-              />
-              <FormControl>
-                <InputLabel>Title size</InputLabel>
-                <Select
-                  label="Title size"
-                  value={titleText.size}
-                  onChange={(e) => {
-                    var a = { ...titleText };
-                    a.size = e.target.value;
-                    if (!isNaN(Number(e.target.value))) setTitleText(a);
-                  }}
-                >
-                  {vectorFontSizes.map((size, index) => (
-                    <MenuItem key={index} value={size}>
-                      {size}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <FormControl>
-                <InputLabel>Title font</InputLabel>
-                <Select
-                  label="Title font"
-                  value={titleText.font}
-                  onChange={(e) => {
-                    var a = { ...titleText };
-                    a.font = e.target.value;
-                    setTitleText(a);
-                  }}
-                >
-                  {vectorFontFamily.map((font, index) => (
-                    <MenuItem key={index} value={font}>
-                      {font}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <Button
-                className="myButton"
-                variant="outlined"
-                onClick={() =>
-                  setTitleText({ font: "Arial", size: 28, color: "black" })
-                }
               >
-                Reset to default
-              </Button>
-            </div>
-          </Collapse>
-        </div>
-        <div className="canvasContainer">
-          <LineGraphCanvas
-            ref={canvasRef}
-            fieldsObejct={fields}
-            boolDisplayXLines={boolDisplayXLines}
-            boolDisplayYLines={boolDisplayYLines}
-            title={lineGraphTitle}
-            canvasSizeX={canvasSizeX}
-            canvasSizeY={canvasSizeY}
-            xValues={xValues}
-            xValuesText={xValuesText}
-            yValuesText={yValuesText}
-            scalesText={scalesText}
-            line={line}
-            xName={xName}
-            yName={yName}
-            titleText={titleText}
-            customMax={customMax}
-            customMin={customMin}
-            grid={grid}
-            boolCustomColors={boolCustomColors}
-            boolDisplayNames={boolDisplayNames}
-            boolDisplayLines={boolDisplayLines}
-            canvasColor={canvasColor}
-          />
-          <Button
-            variant="contained"
-            className="myButton downloadButton"
-            onClick={() => {
-              downloadCanvas();
-            }}
-          >
-            Download the Line Graph now
-          </Button>
-        </div>
+                {vectorFontFamily.map((font, index) => (
+                  <MenuItem key={index} value={font}>
+                    {font}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <Button
+            size={document.body.clientWidth > 767 ? "medium" : "small"}
+              className="myButton"
+              variant="outlined"
+              onClick={() =>
+                setTitleText({ font: "Arial", size:  document.body.clientWidth > 767
+                ?32 : 18, color: "black" })
+              }
+            >
+              Reset to default
+            </Button>
+          </div>
+        </Collapse>
+      </div>
+      <div className="canvasContainer">
+        <LineGraphCanvas
+          ref={canvasRef}
+          fieldsObejct={fields}
+          boolDisplayXLines={boolDisplayXLines}
+          boolDisplayYLines={boolDisplayYLines}
+          title={lineGraphTitle}
+          canvasSizeX={canvasSizeX}
+          canvasSizeY={canvasSizeY}
+          xValues={xValues}
+          xValuesText={xValuesText}
+          yValuesText={yValuesText}
+          scalesText={scalesText}
+          line={line}
+          xName={xName}
+          yName={yName}
+          titleText={titleText}
+          customMax={customMax}
+          customMin={customMin}
+          grid={grid}
+          boolCustomColors={boolCustomColors}
+          boolDisplayNames={boolDisplayNames}
+          boolDisplayLines={boolDisplayLines}
+          canvasColor={canvasColor}
+        />
+        <Button
+          variant="contained"
+          className="myButton downloadButton"
+          onClick={() => {
+            downloadCanvas();
+          }}
+        >
+          Download the Line Graph now
+        </Button>
+      </div>
     </ThemeProvider>
   );
 }

@@ -4,6 +4,7 @@ import { FaTrash } from "react-icons/fa";
 import { IoIosArrowDown } from "react-icons/io";
 import { ThemeProvider } from "@emotion/react";
 
+import InfoIcon from "@material-ui/icons/Info";
 import BarGraphCanvas from "./BarGraphCanvas.js";
 import "./barGraph.css";
 
@@ -19,6 +20,8 @@ import {
   MenuItem,
   InputAdornment,
   Collapse,
+  Tooltip,
+  IconButton
 } from "@mui/material";
 import { MuiColorInput } from "mui-color-input";
 
@@ -30,11 +33,10 @@ const vectorFontFamily = utilitiesData.vectorFontFamily;
 const vectorFontSizes = utilitiesData.vectorFontSizes;
 
 function BarGraph() {
+  console.log("rerendered");
   const canvasRef = useRef();
   const [colorPalette, setColorPalette] = useState(vectorColorPalettes[0]);
   const [theme, setTheme] = useState(PinkAndWhiteTheme);
-  var minRef = useRef(null);
-  var maxRef = useRef(null);
 
   var globalMax = 180;
   var globalMin = 160;
@@ -263,15 +265,18 @@ function BarGraph() {
   );
   const [fields, fieldsDispatch] = useReducer(fieldsReducer, initialFields);
 
+  const [unusedMin, setUnusedMin] = useState("");
+  const [unusedMax, setUnusedMax] = useState("");
+
   const [canvasSizeX, setCanvasSizeX] = useState(700);
   const [canvasSizeY, setCanvasSizeY] = useState(300);
   const [canvasColor, setCanvasColor] = useState("white");
+  const [customBarWidth, setCustomBarWidth] = useState(0);
 
   const [boolShowLines, setBoolShowLines] = useState(true);
   const [boolDisplayValueOnBar, setBoolDisplayValueOnBar] = useState(false);
   const [boolCustomColors, setBoolCustomColors] = useState(true);
   const [boolComposedValues, setBoolComposedValues] = useState(false);
-  const [boolSameColorForName, setBoolSameColorForName] = useState(false);
   const [boolDisplayOptions, setBoolDisplayOptions] = useState(false);
 
   const [barGraphTitle, setBarGraphTitle] = useState(
@@ -326,7 +331,7 @@ function BarGraph() {
       ) {
         setCustomMax(Number(e.target.value));
       } else {
-        alert("Choose a number greater than " + globalMax);
+        setCustomMax(undefined);
       }
     } else {
       if (
@@ -334,7 +339,7 @@ function BarGraph() {
         Number(e.target.value) >= globalMaxComposed
       ) {
         setCustomMax(Number(e.target.value));
-      } else alert("Choose a number greater than " + globalMaxComposed);
+      } else setCustomMax(undefined);
     }
   }
 
@@ -349,14 +354,17 @@ function BarGraph() {
         Number(e.target.value) <= globalMin
       ) {
         setCustomMin(Number(e.target.value));
-      } else alert("Choose a number smaller than " + globalMin);
+      } else {
+        setCustomMin(undefined);
+        console.log(customMin);
+      }
     } else {
       if (
         !isNaN(Number(e.target.value)) &&
         Number(e.target.value) <= globalMinComposed
       ) {
         setCustomMin(Number(e.target.value));
-      } else alert("Choose a number smaller than " + globalMinComposed);
+      } else setCustomMin(undefined);
     }
   }
 
@@ -384,201 +392,194 @@ function BarGraph() {
 
   return (
     <ThemeProvider theme={theme}>
-        <div className="barGraphForm">
-          <h2>Bar graph details</h2>
-          <div className="titleAndPalette">
-            <TextField
-              className="titleInput"
-              label="Title"
-              placeholder="Yout title here"
-              value={barGraphTitle}
-              onChange={(e) => setBarGraphTitle(e.target.value)}
-            />
-            <FormControl>
-              <InputLabel>Color pallette</InputLabel>
-              <Select
-                label="colorPalette"
-                value={colorPalette.name}
-                onChange={(e) => {
-                  changeColorPalette(
-                    vectorColorPalettes.find(
-                      (obj) => obj.name === e.target.value
-                    )
-                  );
-                }}
-              >
-                {vectorColorPalettes.map((cp) => (
-                  <MenuItem key={cp.index} value={cp.name}>
-                    {cp.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </div>
-          <div className="bgFieldsContainerContainer">
-            {boolComposedValues ? (
-              <div className="composedValuesHeaer">
-                <div className="lgTopRightcorner"></div>
-                {composed.map((field, index) => (
-                  <div key={field.index} className="xInput">
-                    <div className="xInputAndColor">
-                      <Input
-                        placeholder="group name"
-                        value={field.composedName}
-                        onChange={(e) => {
+      <div className="barGraphForm">
+        <h2>Bar graph details</h2>
+        <div className="titleAndPalette">
+          <TextField
+            className="titleInput"
+            label="Title"
+            placeholder="Yout title here"
+            value={barGraphTitle}
+            onChange={(e) => setBarGraphTitle(e.target.value)}
+          />
+          <FormControl>
+            <InputLabel>Color pallette</InputLabel>
+            <Select
+              label="colorPalette"
+              value={colorPalette.name}
+              onChange={(e) => {
+                changeColorPalette(
+                  vectorColorPalettes.find((obj) => obj.name === e.target.value)
+                );
+              }}
+            >
+              {vectorColorPalettes.map((cp) => (
+                <MenuItem key={cp.index} value={cp.name}>
+                  {cp.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </div>
+        <div className="fieldsContainer">
+          {boolComposedValues ? (
+            <div className="bgInputValue">
+              <div className="lgTopRightcorner"></div>
+              {composed.map((field, index) => (
+                <div key={field.index} className="xInput">
+                  <div className="xInputAndColor">
+                    <Input
+                      placeholder="group name"
+                      value={field.composedName}
+                      onChange={(e) => {
+                        composedDispatch({
+                          type: "change",
+                          payload: {
+                            indexC: index,
+                            keyC: "composedName",
+                            valueC: e.target.value,
+                          },
+                        });
+                      }}
+                    />
+                    {boolCustomColors ? (
+                      <MuiColorInput
+                        label="bar color"
+                        value={field.composedCustomColor}
+                        onChange={(newValue) => {
                           composedDispatch({
                             type: "change",
                             payload: {
                               indexC: index,
-                              keyC: "composedName",
-                              valueC: e.target.value,
+                              keyC: "composedCustomColor",
+                              valueC: newValue,
                             },
                           });
                         }}
                       />
-                      {boolCustomColors ? (
-                        <MuiColorInput
-                          label="bar color"
-                          value={field.composedCustomColor}
-                          onChange={(newValue) => {
-                            composedDispatch({
-                              type: "change",
-                              payload: {
-                                indexC: index,
-                                keyC: "composedCustomColor",
-                                valueC: newValue,
-                              },
-                            });
-                          }}
-                        />
-                      ) : null}
-                    </div>
-                    <FaTrash
-                      className="xInputTrash"
-                      onClick={() =>
-                        composed.length !== 1
-                          ? deleteComposedField(index)
-                          : null
-                      }
-                    />
+                    ) : null}
                   </div>
-                ))}
-                <CgAddR
-                  display="inline"
-                  onClick={() => {
-                    fieldsDispatch({ type: "addComposed" });
-                    composedDispatch({ type: "addComposed" });
-                  }}
-                />
-              </div>
-            ) : (
-              <div className="bgFieldHeader">
-                <h4>Bar name</h4> <h4>Bar value</h4>
-                {boolCustomColors ? <h4> Bar color</h4> : null} <h4>Delete</h4>
-                <div></div>
-                <div></div>
-                <div></div>
-              </div>
-            )}
-
-            <div className="inputValues">
-              {fields.map((field) => (
-                <div key={field.index} className="bgInputValue">
-                  <Input
-                    placeholder="Bar name"
-                    value={field.barGraphName}
-                    onChange={(e) =>
-                      fieldsDispatch({
-                        type: "change",
-                        payload: {
-                          indexC: field.index - 1,
-                          keyC: "barGraphName",
-                          valueC: e.target.value,
-                        },
-                      })
-                    }
-                  />
-                  {!boolComposedValues ? (
-                    <Input
-                      placeholder="Bar value"
-                      value={field.barGraphValue}
-                      onChange={(e) =>
-                        fieldsDispatch({
-                          type: "number",
-                          payload: {
-                            indexN: field.index - 1,
-                            keyN: "barGraphValue",
-                            valueN: e.target.value,
-                          },
-                        })
-                      }
-                    />
-                  ) : (
-                    composed.map((unused, composedIndex) => (
-                      <TextField
-                        key={unused.index}
-                        value={field.barGraphArray[composedIndex]}
-                        onChange={(e) =>
-                          fieldsDispatch({
-                            type: "array",
-                            payload: {
-                              indexA: field.index - 1,
-                              keyA: "barGraphArray",
-                              valueA: e.target.value,
-                              index2A: composedIndex,
-                            },
-                          })
-                        }
-                      />
-                    ))
-                  )}
-                  {boolCustomColors && !boolComposedValues ? (
-                    <MuiColorInput
-                      label="Bar color"
-                      value={field.barGraphCustomColor}
-                      onChange={(newValue) =>
-                        fieldsDispatch({
-                          type: "change",
-                          payload: {
-                            indexC: field.index - 1,
-                            keyC: "barGraphCustomColor",
-                            valueC: newValue,
-                          },
-                        })
-                      }
-                    />
-                  ) : null}
                   <FaTrash
+                    className="xInputTrash"
                     onClick={() =>
-                      fields.length !== 1 ? deleteField(field.index) : null
+                      composed.length !== 1 ? deleteComposedField(index) : null
                     }
                   />
                 </div>
               ))}
+              <CgAddR
+                display="inline"
+                onClick={() => {
+                  fieldsDispatch({ type: "addComposed" });
+                  composedDispatch({ type: "addComposed" });
+                }}
+              />
             </div>
-          </div>
-          <div className="titleAndPalette">
-            <div>
-              Add new field
-              <CgAddR onClick={() => fieldsDispatch({ type: "add" })} />
+          ) : (
+            <div className="bgInputValue">
+              <h4>Bar name</h4> <h4>Bar value</h4>
+              {boolCustomColors ? <h4> Bar color</h4> : null} <h4>Delete</h4>
             </div>
+          )}
 
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={boolCustomColors}
-                  onClick={() => {
-                    setBoolCustomColors(!boolCustomColors);
-                    if (boolCustomColors) {
-                      fieldsDispatch({ type: "removeColor" });
-                      composedDispatch({ type: "removeColor" });
-                    }
-                  }}
+          <div className="inputValues">
+            {fields.map((field) => (
+              <div key={field.index} className="bgInputValue">
+                <Input
+                  placeholder="Bar name"
+                  value={field.barGraphName}
+                  onChange={(e) =>
+                    fieldsDispatch({
+                      type: "change",
+                      payload: {
+                        indexC: field.index - 1,
+                        keyC: "barGraphName",
+                        valueC: e.target.value,
+                      },
+                    })
+                  }
                 />
-              }
-              label="Custom colors"
-            />
+                {!boolComposedValues ? (
+                  <Input
+                    placeholder="Bar value"
+                    value={field.barGraphValue}
+                    onChange={(e) =>
+                      fieldsDispatch({
+                        type: "number",
+                        payload: {
+                          indexN: field.index - 1,
+                          keyN: "barGraphValue",
+                          valueN: e.target.value,
+                        },
+                      })
+                    }
+                  />
+                ) : (
+                  composed.map((unused, composedIndex) => (
+                    <TextField
+                      key={unused.index}
+                      value={field.barGraphArray[composedIndex]}
+                      onChange={(e) =>
+                        fieldsDispatch({
+                          type: "array",
+                          payload: {
+                            indexA: field.index - 1,
+                            keyA: "barGraphArray",
+                            valueA: e.target.value,
+                            index2A: composedIndex,
+                          },
+                        })
+                      }
+                    />
+                  ))
+                )}
+                {boolCustomColors && !boolComposedValues ? (
+                  <MuiColorInput
+                    label="Bar color"
+                    value={field.barGraphCustomColor}
+                    onChange={(newValue) =>
+                      fieldsDispatch({
+                        type: "change",
+                        payload: {
+                          indexC: field.index - 1,
+                          keyC: "barGraphCustomColor",
+                          valueC: newValue,
+                        },
+                      })
+                    }
+                  />
+                ) : null}
+                <FaTrash
+                  onClick={() =>
+                    fields.length !== 1 ? deleteField(field.index) : null
+                  }
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="titleAndPalette">
+          <div>
+            Add bar
+            <CgAddR className="myAdd" onClick={() => fieldsDispatch({ type: "add" })} />
+          </div>
 
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={boolCustomColors}
+                onClick={() => {
+                  setBoolCustomColors(!boolCustomColors);
+                  if (boolCustomColors) {
+                    fieldsDispatch({ type: "removeColor" });
+                    composedDispatch({ type: "removeColor" });
+                  }
+                }}
+              />
+            }
+            label="Custom colors"
+          />
+          <div>
             <FormControlLabel
               control={
                 <Checkbox
@@ -588,485 +589,525 @@ function BarGraph() {
               }
               label="Grouped bar chart"
             />
+            <Tooltip title="A grouped bar graph displays multiple sets of data, with bars grouped for each category. Bars represent values, and color distinguishes datasets.">
+              <IconButton>
+                <InfoIcon />
+              </IconButton>
+            </Tooltip>
           </div>
-          <div onClick={() => setBoolDisplayOptions(!boolDisplayOptions)}>
-            Show options <IoIosArrowDown />
-          </div>
+        </div>
+        <div className="showOptions" onClick={() => setBoolDisplayOptions(!boolDisplayOptions)}>
+        <div>Show options <IoIosArrowDown /></div>
+        </div>
 
-          <Collapse in={boolDisplayOptions} className="optionsContainer">
-            <div className="bgNonTextOptions">
-              <div className="optionSection">
-                <h4>Canvas options</h4>
-                <TextField
-                  label="Canvas width"
-                  value={canvasSizeX}
-                  onChange={(e) =>
-                    !isNaN(Number(e.target.value))
-                      ? setCanvasSizeX(Number(e.target.value))
-                      : null
-                  }
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">px</InputAdornment>
-                    ),
-                  }}
-                />
+        <Collapse in={boolDisplayOptions} className="optionsContainer">
+          <div className="bgNonTextOptions">
+            <div className="optionSection">
+              <h4>Canvas options</h4>
+              <TextField
+                label="Canvas width"
+                value={canvasSizeX}
+                onChange={(e) =>
+                  !isNaN(Number(e.target.value))
+                    ? setCanvasSizeX(Number(e.target.value))
+                    : null
+                }
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">px</InputAdornment>
+                  ),
+                }}
+              />
 
-                <TextField
-                  label="Canvas height"
-                  value={canvasSizeY}
-                  onChange={(e) =>
-                    !isNaN(Number(e.target.value))
-                      ? setCanvasSizeY(Number(e.target.value))
-                      : null
-                  }
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">px</InputAdornment>
-                    ),
-                  }}
-                />
+              <TextField
+                label="Canvas height"
+                value={canvasSizeY}
+                onChange={(e) =>
+                  !isNaN(Number(e.target.value))
+                    ? setCanvasSizeY(Number(e.target.value))
+                    : null
+                }
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">px</InputAdornment>
+                  ),
+                }}
+              />
 
-                <MuiColorInput
-                  label="Canvas color"
-                  value={canvasColor}
-                  onChange={(newValue) => setCanvasColor(newValue)}
-                />
-                <Button
-                  variant="outlined"
-                  onClick={() => {
-                    setCanvasSizeX(700);
-                    setCanvasSizeY(300);
-                  }}
-                >
-                  Resize to normal
-                </Button>
-              </div>
-
-              <div className="optionSection">
-                <h4>Line options</h4>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={boolShowLines}
-                      onChange={() => setBoolShowLines(!boolShowLines)}
-                    />
-                  }
-                  label="Show horizontal lines"
-                />
-                <MuiColorInput
-                  label="Lines color"
-                  value={line.color}
-                  onChange={(newValue) => {
-                    var a = { ...line };
-                    a.color = newValue;
-                    setLine(a);
-                  }}
-                />
-                <TextField
-                  label="Lines width"
-                  value={line.size}
-                  onChange={(e) => {
-                    var a = { ...line };
-                    a.size = e.target.value;
-                    if (!isNaN(Number(e.target.value))) setLine(a);
-                  }}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">px</InputAdornment>
-                    ),
-                  }}
-                />
-                <Button
-                  variant="outlined"
-                  onClick={() => setLine({ color: "grey", size: 1 })}
-                >
-                  Reset to default
-                </Button>
-              </div>
-              <div className="optionSection">
-                <h4>Bar options</h4>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={boolSameColorForName}
-                      onChange={() =>
-                        setBoolSameColorForName(!boolSameColorForName)
-                      }
-                    />
-                  }
-                  label="Use bar color for name"
-                />
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={boolDisplayValueOnBar}
-                      onChange={() =>
-                        setBoolDisplayValueOnBar(!boolDisplayValueOnBar)
-                      }
-                    />
-                  }
-                  label="Display value on bar"
-                />
-
-                <MuiColorInput
-                  label="Bar value color"
-                  value={fieldTextValueOnBar.fieldTextColor}
-                  onChange={(newValue) => {
-                    var a = { ...fieldTextValueOnBar };
-                    a.fieldTextColor = newValue;
-                    setFieldTextValueOnBar(a);
-                  }}
-                />
-                <div className="bgBarFontAndSize">
-                  <FormControl>
-                    <InputLabel>Bar value size</InputLabel>
-                    <Select
-                      label="Bar value size"
-                      value={fieldTextValueOnBar.fieldTextSize}
-                      onChange={(e) => {
-                        var a = { ...fieldTextValueOnBar };
-                        a.fieldTextSize = e.target.value;
-                        if (!isNaN(Number(e.target.value)))
-                          setFieldTextValueOnBar(a);
-                      }}
-                    >
-                      {vectorFontSizes.map((size, index) => (
-                        <MenuItem key={index} value={size}>
-                          {size}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                  <FormControl>
-                    <InputLabel>Bar value font</InputLabel>
-                    <Select
-                      label="Bar value font"
-                      value={fieldTextValueOnBar.fieldTextFont}
-                      onChange={(e) => {
-                        var a = { ...fieldTextValueOnBar };
-                        a.fieldTextFont = e.target.value;
-                        setFieldTextValueOnBar(a);
-                      }}
-                    >
-                      {vectorFontFamily.map((font, index) => (
-                        <MenuItem key={index} value={font}>
-                          {font}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </div>
-                <Button
-                  variant="outlined"
-                  onClick={() =>
-                    setFieldTextValueOnBar({
-                      fieldTextColor: "black",
-                      fieldTextSize: 12,
-                      fieldTextFont: "Arial",
-                    })
-                  }
-                >
-                  Reset to default
-                </Button>
-              </div>
-              <div className="optionSection">
-                <h4>Custom range</h4>
-                <TextField
-                  label="Lowest value"
-                  ref={minRef}
-                  onBlur={(e) => handleMin(e)}
-                />
-                <TextField
-                  label="Highest value"
-                  ref={maxRef}
-                  onBlur={(e) => handleMax(e)}
-                />
-                <Button
-                  variant="outlined"
-                  onClick={() => {
-                    setCustomMax(null);
-                    setCustomMin(null);
-                    minRef.current.value = "";
-                    maxRef.current.value = "";
-                  }}
-                >
-                  Delete custom values
-                </Button>
-              </div>
-            </div>
-            <div className="lgTextHeader">
-              <h2>Text options</h2>
-            </div>
-            <div className="textOptions">
-              Bar names
               <MuiColorInput
-                label="Bar name color"
-                value={fieldText.fieldTextColor}
+                label="Canvas color"
+                value={canvasColor}
+                onChange={(newValue) => setCanvasColor(newValue)}
+              />
+              <Button
+                variant="outlined"
+                onClick={() => {
+                  setCanvasSizeX(700);
+                  setCanvasSizeY(300);
+                }}
+              >
+                Resize to normal
+              </Button>
+            </div>
+
+            <div className="optionSection">
+              <h4>Line options</h4>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={boolShowLines}
+                    onChange={() => setBoolShowLines(!boolShowLines)}
+                  />
+                }
+                label="Show horizontal lines"
+              />
+              <MuiColorInput
+                disabled={!boolShowLines}
+                label="Lines color"
+                value={line.color}
                 onChange={(newValue) => {
-                  var a = { ...fieldText };
+                  var a = { ...line };
+                  a.color = newValue;
+                  setLine(a);
+                }}
+              />
+              <TextField
+                disabled={!boolShowLines}
+                label="Lines width"
+                value={line.size}
+                onChange={(e) => {
+                  var a = { ...line };
+                  a.size = e.target.value;
+                  if (!isNaN(Number(e.target.value))) setLine(a);
+                }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">px</InputAdornment>
+                  ),
+                }}
+              />
+              <Button
+                disabled={!boolShowLines}
+                variant="outlined"
+                onClick={() => setLine({ color: "grey", size: 1 })}
+              >
+                Reset to default
+              </Button>
+            </div>
+            <div className="optionSection">
+              <h4>Bar options</h4>
+              <TextField
+                label="Custom bar width"
+                value={customBarWidth}
+                onChange={(e) => {
+                  if (!isNaN(Number(e.target.value)))
+                    setCustomBarWidth(Number(e.target.value));
+                }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">px</InputAdornment>
+                  ),
+                }}
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={boolDisplayValueOnBar}
+                    onChange={() =>
+                      setBoolDisplayValueOnBar(!boolDisplayValueOnBar)
+                    }
+                  />
+                }
+                label="Display value on bar"
+              />
+
+              <MuiColorInput
+                disabled={!boolDisplayValueOnBar}
+                label="Bar value color"
+                value={fieldTextValueOnBar.fieldTextColor}
+                onChange={(newValue) => {
+                  var a = { ...fieldTextValueOnBar };
                   a.fieldTextColor = newValue;
+                  setFieldTextValueOnBar(a);
+                }}
+              />
+              <div className="bgBarFontAndSize">
+                <FormControl>
+                  <InputLabel>Bar value size</InputLabel>
+                  <Select
+                    disabled={!boolDisplayValueOnBar}
+                    label="Bar value size"
+                    value={fieldTextValueOnBar.fieldTextSize}
+                    onChange={(e) => {
+                      var a = { ...fieldTextValueOnBar };
+                      a.fieldTextSize = e.target.value;
+                      if (!isNaN(Number(e.target.value)))
+                        setFieldTextValueOnBar(a);
+                    }}
+                  >
+                    {vectorFontSizes.map((size, index) => (
+                      <MenuItem key={index} value={size}>
+                        {size}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <FormControl>
+                  <InputLabel>Bar value font</InputLabel>
+                  <Select
+                    disabled={!boolDisplayValueOnBar}
+                    label="Bar value font"
+                    value={fieldTextValueOnBar.fieldTextFont}
+                    onChange={(e) => {
+                      var a = { ...fieldTextValueOnBar };
+                      a.fieldTextFont = e.target.value;
+                      setFieldTextValueOnBar(a);
+                    }}
+                  >
+                    {vectorFontFamily.map((font, index) => (
+                      <MenuItem key={index} value={font}>
+                        {font}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </div>
+              <Button
+                disabled={!boolDisplayValueOnBar}
+                variant="outlined"
+                onClick={() =>
+                  setFieldTextValueOnBar({
+                    fieldTextColor: "black",
+                    fieldTextSize: 12,
+                    fieldTextFont: "Arial",
+                  })
+                }
+              >
+                Reset to default
+              </Button>
+            </div>
+            <div className="optionSection">
+              <h4>
+                Custom range
+                <Tooltip title="Ensure that the highest boundary exceeds the bar values and the lowest boundary falls below the lowest bar value. This practice is strongly discouraged and may lead to unexpected behavior.">
+                  <IconButton>
+                    <InfoIcon />
+                  </IconButton>
+                </Tooltip>
+              </h4>
+              <TextField
+                error={customMin === undefined}
+                helperText={
+                  customMin === undefined
+                    ? boolComposedValues
+                      ? "Please select a value lower than" + globalMinComposed
+                      : "Please select a value lower than" + globalMin
+                    : null
+                }
+                label="Lowest value"
+                value={unusedMin}
+                onChange={(e) => setUnusedMin(e.target.value)}
+                onBlur={(e) => handleMin(e)}
+              />
+              <TextField
+                error={customMax === undefined}
+                helperText={
+                  customMax === undefined
+                    ? boolComposedValues
+                      ? "Please select a value higher than" + globalMaxComposed
+                      : "Please select a value higher than" + globalMax
+                    : null
+                }
+                value={unusedMax}
+                onChange={(e) => setUnusedMax(e.target.value)}
+                label="Highest value"
+                onBlur={(e) => handleMax(e)}
+              />
+              <Button
+                variant="outlined"
+                onClick={() => {
+                  setCustomMax(null);
+                  setCustomMin(null);
+                  setUnusedMax('');
+                  setUnusedMin('');
+                }}
+              >
+                Delete custom values
+              </Button>
+            </div>
+          </div>
+          <div className="textHeader">
+            <h2>Text options</h2>
+          </div>
+          <div className="textOptions">
+            Bar names
+            <MuiColorInput
+              label="Bar name color"
+              value={fieldText.fieldTextColor}
+              onChange={(newValue) => {
+                var a = { ...fieldText };
+                a.fieldTextColor = newValue;
+                setFieldText(a);
+              }}
+            />
+            <FormControl>
+              <InputLabel>Bar name size</InputLabel>
+              <Select
+                label="Bar name size"
+                value={fieldText.fieldTextSize}
+                onChange={(e) => {
+                  var a = { ...fieldText };
+                  a.fieldTextSize = e.target.value;
+                  if (!isNaN(Number(e.target.value))) setFieldText(a);
+                }}
+              >
+                {vectorFontSizes.map((size, index) => (
+                  <MenuItem key={index} value={size}>
+                    {size}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl>
+              <InputLabel>Bar name font</InputLabel>
+              <Select
+                label="Bar name font"
+                value={fieldText.fieldTextFont}
+                onChange={(e) => {
+                  var a = { ...fieldText };
+                  a.fieldTextFont = e.target.value;
                   setFieldText(a);
                 }}
-              />
-              <FormControl>
-                <InputLabel>Bar name size</InputLabel>
-                <Select
-                  label="Bar name size"
-                  value={fieldText.fieldTextSize}
-                  onChange={(e) => {
-                    var a = { ...fieldText };
-                    a.fieldTextSize = e.target.value;
-                    if (!isNaN(Number(e.target.value))) setFieldText(a);
-                  }}
-                >
-                  {vectorFontSizes.map((size, index) => (
-                    <MenuItem key={index} value={size}>
-                      {size}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <FormControl>
-                <InputLabel>Bar name font</InputLabel>
-                <Select
-                  label="Bar name font"
-                  value={fieldText.fieldTextFont}
-                  onChange={(e) => {
-                    var a = { ...fieldText };
-                    a.fieldTextFont = e.target.value;
-                    setFieldText(a);
-                  }}
-                >
-                  {vectorFontFamily.map((font, index) => (
-                    <MenuItem key={index} value={font}>
-                      {font}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <Button
-                variant="outlined"
-                onClick={() =>
-                  setFieldText({
-                    fieldTextColor: "black",
-                    fieldTextSize: 12,
-                    fieldTextFont: "Arial",
-                  })
-                }
               >
-                Reset to default
-              </Button>
-              Group names
-              <MuiColorInput
-                label="Group color"
-                value={fieldTextComposed.fieldTextColor}
-                onChange={(newValue) => {
+                {vectorFontFamily.map((font, index) => (
+                  <MenuItem key={index} value={font}>
+                    {font}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <Button
+              variant="outlined"
+              onClick={() =>
+                setFieldText({
+                  fieldTextColor: "black",
+                  fieldTextSize: 12,
+                  fieldTextFont: "Arial",
+                })
+              }
+            >
+              Reset to default
+            </Button>
+            Group names
+            <MuiColorInput
+              label="Group color"
+              value={fieldTextComposed.fieldTextColor}
+              onChange={(newValue) => {
+                var a = { ...fieldTextComposed };
+                a.fieldTextColor = newValue;
+                setFieldTextComposed(a);
+              }}
+            />
+            <FormControl>
+              <InputLabel>Group size</InputLabel>
+              <Select
+                label="Group size"
+                value={fieldTextComposed.fieldTextSize}
+                onChange={(e) => {
                   var a = { ...fieldTextComposed };
-                  a.fieldTextColor = newValue;
+                  a.fieldTextSize = e.target.value;
+                  if (!isNaN(Number(e.target.value))) setFieldTextComposed(a);
+                }}
+              >
+                {vectorFontSizes.map((size, index) => (
+                  <MenuItem key={index} value={size}>
+                    {size}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl>
+              <InputLabel>Group font</InputLabel>
+              <Select
+                label="Group font"
+                value={fieldTextComposed.fieldTextFont}
+                onChange={(e) => {
+                  var a = { ...fieldTextComposed };
+                  a.fieldTextFont = e.target.value;
                   setFieldTextComposed(a);
                 }}
-              />
-              <FormControl>
-                <InputLabel>Group size</InputLabel>
-                <Select
-                  label="Group size"
-                  value={fieldTextComposed.fieldTextSize}
-                  onChange={(e) => {
-                    var a = { ...fieldTextComposed };
-                    a.fieldTextSize = e.target.value;
-                    if (!isNaN(Number(e.target.value))) setFieldTextComposed(a);
-                  }}
-                >
-                  {vectorFontSizes.map((size, index) => (
-                    <MenuItem key={index} value={size}>
-                      {size}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <FormControl>
-                <InputLabel>Group font</InputLabel>
-                <Select
-                  label="Group font"
-                  value={fieldTextComposed.fieldTextFont}
-                  onChange={(e) => {
-                    var a = { ...fieldTextComposed };
-                    a.fieldTextFont = e.target.value;
-                    setFieldTextComposed(a);
-                  }}
-                >
-                  {vectorFontFamily.map((font, index) => (
-                    <MenuItem key={index} value={font}>
-                      {font}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <Button
-                variant="outlined"
-                onClick={() =>
-                  setFieldTextComposed({
-                    fieldTextColor: "black",
-                    fieldTextSize: 12,
-                    fieldTextFont: "Arial",
-                  })
-                }
               >
-                Reset to default
-              </Button>
-              Scales
-              <MuiColorInput
-                label="Bar value color"
-                value={fieldTextValue.fieldTextColor}
-                onChange={(newValue) => {
+                {vectorFontFamily.map((font, index) => (
+                  <MenuItem key={index} value={font}>
+                    {font}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <Button
+              variant="outlined"
+              onClick={() =>
+                setFieldTextComposed({
+                  fieldTextColor: "black",
+                  fieldTextSize: 12,
+                  fieldTextFont: "Arial",
+                })
+              }
+            >
+              Reset to default
+            </Button>
+            Scales
+            <MuiColorInput
+              label="Bar value color"
+              value={fieldTextValue.fieldTextColor}
+              onChange={(newValue) => {
+                var a = { ...fieldTextValue };
+                a.fieldTextColor = newValue;
+                setFieldTextValue(a);
+              }}
+            />
+            <FormControl>
+              <InputLabel>Scale size</InputLabel>
+              <Select
+                label="Scale size"
+                value={fieldTextValue.fieldTextSize}
+                onChange={(e) => {
                   var a = { ...fieldTextValue };
-                  a.fieldTextColor = newValue;
+                  a.fieldTextSize = e.target.value;
+                  if (!isNaN(Number(e.target.value))) setFieldTextValue(a);
+                }}
+              >
+                {vectorFontSizes.map((size, index) => (
+                  <MenuItem key={index} value={size}>
+                    {size}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl>
+              <InputLabel>Scale font</InputLabel>
+              <Select
+                label="Scale font"
+                value={fieldTextValue.fieldTextFont}
+                onChange={(e) => {
+                  var a = { ...fieldTextValue };
+                  a.fieldTextFont = e.target.value;
                   setFieldTextValue(a);
                 }}
-              />
-              <FormControl>
-                <InputLabel>Scale size</InputLabel>
-                <Select
-                  label="Scale size"
-                  value={fieldTextValue.fieldTextSize}
-                  onChange={(e) => {
-                    var a = { ...fieldTextValue };
-                    a.fieldTextSize = e.target.value;
-                    if (!isNaN(Number(e.target.value))) setFieldTextValue(a);
-                  }}
-                >
-                  {vectorFontSizes.map((size, index) => (
-                    <MenuItem key={index} value={size}>
-                      {size}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <FormControl>
-                <InputLabel>Scale font</InputLabel>
-                <Select
-                  label="Scale font"
-                  value={fieldTextValue.fieldTextFont}
-                  onChange={(e) => {
-                    var a = { ...fieldTextValue };
-                    a.fieldTextFont = e.target.value;
-                    setFieldTextValue(a);
-                  }}
-                >
-                  {vectorFontFamily.map((font, index) => (
-                    <MenuItem key={index} value={font}>
-                      {font}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <Button
-                variant="outlined"
-                onClick={() =>
-                  setFieldTextValue({
-                    fieldTextColor: "black",
-                    fieldTextSize: 12,
-                    fieldTextFont: "Arial",
-                  })
-                }
               >
-                Reset to default
-              </Button>
-              Title
-              <MuiColorInput
-                label="Title color"
-                value={fieldTextTitle.fieldTextColor}
-                onChange={(newValue) => {
+                {vectorFontFamily.map((font, index) => (
+                  <MenuItem key={index} value={font}>
+                    {font}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <Button
+              variant="outlined"
+              onClick={() =>
+                setFieldTextValue({
+                  fieldTextColor: "black",
+                  fieldTextSize: 12,
+                  fieldTextFont: "Arial",
+                })
+              }
+            >
+              Reset to default
+            </Button>
+            Title
+            <MuiColorInput
+              label="Title color"
+              value={fieldTextTitle.fieldTextColor}
+              onChange={(newValue) => {
+                var a = { ...fieldTextTitle };
+                a.fieldTextColor = newValue;
+                setFieldTextTitle(a);
+              }}
+            />
+            <FormControl>
+              <InputLabel>Title size</InputLabel>
+              <Select
+                label="Title size"
+                value={fieldTextTitle.fieldTextSize}
+                onChange={(e) => {
                   var a = { ...fieldTextTitle };
-                  a.fieldTextColor = newValue;
+                  a.fieldTextSize = e.target.value;
+                  if (!isNaN(Number(e.target.value))) setFieldTextTitle(a);
+                }}
+              >
+                {vectorFontSizes.map((size, index) => (
+                  <MenuItem key={index} value={size}>
+                    {size}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl>
+              <InputLabel>Title font</InputLabel>
+              <Select
+                label="Title font"
+                value={fieldTextTitle.fieldTextFont}
+                onChange={(e) => {
+                  var a = { ...fieldTextTitle };
+                  a.fieldTextFont = e.target.value;
                   setFieldTextTitle(a);
                 }}
-              />
-              <FormControl>
-                <InputLabel>Title size</InputLabel>
-                <Select
-                  label="Title size"
-                  value={fieldTextTitle.fieldTextSize}
-                  onChange={(e) => {
-                    var a = { ...fieldTextTitle };
-                    a.fieldTextSize = e.target.value;
-                    if (!isNaN(Number(e.target.value))) setFieldTextTitle(a);
-                  }}
-                >
-                  {vectorFontSizes.map((size, index) => (
-                    <MenuItem key={index} value={size}>
-                      {size}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <FormControl>
-                <InputLabel>Title font</InputLabel>
-                <Select
-                  label="Title font"
-                  value={fieldTextTitle.fieldTextFont}
-                  onChange={(e) => {
-                    var a = { ...fieldTextTitle };
-                    a.fieldTextFont = e.target.value;
-                    setFieldTextTitle(a);
-                  }}
-                >
-                  {vectorFontFamily.map((font, index) => (
-                    <MenuItem key={index} value={font}>
-                      {font}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <Button
-                variant="outlined"
-                onClick={() =>
-                  setFieldTextTitle({
-                    fieldTextColor: "black",
-                    fieldTextSize: 32,
-                    fieldTextFont: "Arial",
-                  })
-                }
               >
-                Reset to default
-              </Button>
-            </div>
-          </Collapse>
-        </div>
-        <div className="canvasContainer">
-          <BarGraphCanvas
-            ref={canvasRef}
-            fieldsObejct={fields}
-            boolShowLines={boolShowLines}
-            boolDisplayValueOnBar={boolDisplayValueOnBar}
-            composed={composed}
-            boolComposedValues={boolComposedValues}
-            canvasSizeX={canvasSizeX}
-            canvasSizeY={canvasSizeY}
-            title={barGraphTitle}
-            customMax={customMax}
-            customMin={customMin}
-            fieldText={fieldText}
-            fieldTextComposed={fieldTextComposed}
-            fieldTextValue={fieldTextValue}
-            fieldTextTitle={fieldTextTitle}
-            fieldTextValueOnBar={fieldTextValueOnBar}
-            line={line}
-            boolSameColorForName={boolSameColorForName}
-            canvasColor={canvasColor}
-            boolCustomColors={boolCustomColors}
-          />
-          <Button
-            variant="contained"
-            className="myButton downloadButton"
-            onClick={() => {
-              downloadCanvas();
-            }}
-          >
-            Download the bar Graph now
-          </Button>
-        </div>
+                {vectorFontFamily.map((font, index) => (
+                  <MenuItem key={index} value={font}>
+                    {font}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <Button
+              variant="outlined"
+              onClick={() =>
+                setFieldTextTitle({
+                  fieldTextColor: "black",
+                  fieldTextSize: 32,
+                  fieldTextFont: "Arial",
+                })
+              }
+            >
+              Reset to default
+            </Button>
+          </div>
+        </Collapse>
+      </div>
+      <div className="canvasContainer">
+        <BarGraphCanvas
+          ref={canvasRef}
+          fieldsObejct={fields}
+          boolShowLines={boolShowLines}
+          customBarWidth={customBarWidth}
+          boolDisplayValueOnBar={boolDisplayValueOnBar}
+          composed={composed}
+          boolComposedValues={boolComposedValues}
+          canvasSizeX={canvasSizeX}
+          canvasSizeY={canvasSizeY}
+          title={barGraphTitle}
+          customMax={customMax}
+          customMin={customMin}
+          fieldText={fieldText}
+          fieldTextComposed={fieldTextComposed}
+          fieldTextValue={fieldTextValue}
+          fieldTextTitle={fieldTextTitle}
+          fieldTextValueOnBar={fieldTextValueOnBar}
+          line={line}
+          canvasColor={canvasColor}
+          boolCustomColors={boolCustomColors}
+        />
+        <Button
+          variant="contained"
+          className="myButton downloadButton"
+          onClick={() => {
+            downloadCanvas();
+          }}
+        >
+          Download the bar Graph now
+        </Button>
+      </div>
     </ThemeProvider>
   );
 }

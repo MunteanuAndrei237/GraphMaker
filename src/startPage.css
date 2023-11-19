@@ -1,14 +1,18 @@
-#mainsquare {
-    width: 40%;
+#mainSquare {
+    display: grid;
+    row-gap: 2vh;
+}
+#mainSquareContainer{
+    width: 50%;
     height: 40%;
-    border: 1px solid black;
-    left: 25%;
+    left: 23%;
     top: 20%;
     background-color:rgba(239, 239, 239, 0.9);
     position: absolute;
     z-index: 1;
-    padding: 5%;
+    padding: 2%;
     display: grid;
+    align-items: center;
     border: 1rem solid #aaaaff;
     border-image: repeating-linear-gradient(45deg, transparent, transparent 5px, #aaaaff 6px, #aaaaff 15px, transparent 16px, transparent 20px) 20/1rem;
 }
@@ -16,4 +20,23 @@
     width: 100vw;
     height:100vh;
 }
-
+@media (max-width: 767px) {
+    html
+    {
+        font-size: 8px;
+    }
+    p{
+        font-size: 8px;
+    }
+    #mainSquareContainer {
+        left:0%;
+        width: 100%;
+        border-image: repeating-linear-gradient(45deg, transparent, transparent 5px, #aaaaff 6px, #aaaaff 15px, transparent 16px, transparent 20px) 20/0.5rem;
+}
+    h2,h3,h4,h5,h6{
+        font-size: 1.5rem;
+    }
+    h1{
+        font-size: 2rem;
+    }
+}

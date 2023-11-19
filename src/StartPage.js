@@ -1,5 +1,5 @@
 import { Select,MenuItem,Button,InputLabel,FormControl  } from '@mui/material';
-import GraphsContainer from './GraphsContainer.js';
+import Graph from './Graph.js';
 import { useState } from 'react';
 import './startPage.css';
 import { useRef } from 'react';
@@ -8,15 +8,16 @@ import './graph.css';
 
 function StartPage()
 {
-    const [graphsArray,setgraphsArray] = useState([]);
+    const [graphString,setgraphString] = useState(null);
     const [graphType,setgraphType] = useState('lineGraph');
     const selectRef = useRef(null);
     return (
         <div id="wholePage">
         <div id="mainPage">
-        <div id="mainsquare">
-            <h1>Create your own graph in seconds</h1>
-            <p>Choose between different type of graphs and customize them how you want.Choose between different type of graphs and customize them how you want.Choose between different type of graphs and customize them how you want.</p>
+            <div id="mainSquareContainer">
+        <div id="mainSquare">
+            <h1>Design your own graph in seconds</h1>
+            <p>Create stunning graphs effortlessly. Choose from a vast range of graphs. Customize your visuals with a range of options and vibrant color palettes. No payment or account needed.</p>
 
             <h3>Get started:</h3>
         <FormControl >
@@ -29,11 +30,12 @@ function StartPage()
         
     </Select>
     </FormControl>
-    <Button  variant='outlined' onClick={() => setgraphsArray([...graphsArray,graphType])}>Create new graph</Button>
+    <Button  variant='outlined' onClick={() => setgraphString(graphType)}>Create new graph</Button>
            
             </div>
             </div>
-            <GraphsContainer graphsArray={graphsArray}/>
+            </div>
+            <Graph graphString={graphString}/>
         </div>
     )
     

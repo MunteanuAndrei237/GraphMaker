@@ -5,11 +5,11 @@ const PieChartCanvas = forwardRef((props,ref) =>
 {
     const draw = ctx => { 
         var dimx=props.canvasSizeX;
-        var dimy=props.canvasSizeY;
+        var dimy=props.canvasSizeY-100;
         var barGraphSizeX=dimx*0.7;
-        var barGraphSizeY=dimy*0.7;
+        var barGraphSizeY=dimy*0.8;
         var paddingX=(dimx-barGraphSizeX)/2;
-        var paddingY=(dimy-barGraphSizeY)/2;
+        var paddingY=(dimy-barGraphSizeY)/2+100;
         var barWidth=barGraphSizeX/(props.fieldsObejct.length*2+1);
         var maxValue=0;
         var minValue=0;
@@ -31,9 +31,9 @@ const PieChartCanvas = forwardRef((props,ref) =>
             });
         }
 
-        if (props.customMin!==null)
+        if (props.customMin!==null && props.customMin!==undefined)
             minValue=props.customMin;
-        if (props.customMax!==null)
+        if (props.customMax!==null && props.customMax!==undefined)
             maxValue=props.customMax;
         
         var range=maxValue-minValue;
@@ -52,7 +52,7 @@ const PieChartCanvas = forwardRef((props,ref) =>
         var scale=Math.floor(Math.floor(range/scales)/rounding)*rounding;
         
         ctx.fillStyle = props.canvasColor;
-        ctx.fillRect(0, 0, dimx, dimy);
+        ctx.fillRect(0, 0, dimx, dimy+100);
 
         ctx.fillStyle =  props.fieldTextTitle.fieldTextColor;
         ctx.font = props.fieldTextTitle.fieldTextSize+"px "+ props.fieldTextTitle.fieldTextFont;
@@ -80,13 +80,19 @@ const PieChartCanvas = forwardRef((props,ref) =>
             if(!props.boolComposedValues)
          props.fieldsObejct.forEach(element => {
             let startingX=paddingX+barWidth*(2*element.index-1);
+            
             let lenghtX=barWidth;
+            if(props.customBarWidth!==0)
+                lenghtX=props.customBarWidth;
             let lenghtY=(element.barGraphValue-minValue)/range*(barGraphSizeY);
             let startingY= paddingY + barGraphSizeY - lenghtY;
             if(props.boolCustomColors)
                 ctx.fillStyle = element.barGraphCustomColor;
             else
                 ctx.fillStyle = element.barGraphColor;
+                if(props.customBarWidth!==0)
+            ctx.fillRect(startingX+(barWidth-props.customBarWidth)/2,startingY,lenghtX,lenghtY);
+                else
             ctx.fillRect(startingX,startingY,lenghtX,lenghtY);
             
             ctx.font = props.fieldText.fieldTextSize +"px "+  props.fieldText.fieldTextFont;
@@ -112,8 +118,10 @@ const PieChartCanvas = forwardRef((props,ref) =>
                 ctx.font = props.fieldText.fieldTextSize +"px "+  props.fieldText.fieldTextFont;
                 ctx.fillStyle = props.fieldText.fieldTextColor;
                 ctx.fillText(element.barGraphName, paddingX+ barWidth*(2*element.index-1) + (barWidth-ctx.measureText(element.barGraphName).width)/2 , paddingY + barGraphSizeY+ Number(props.fieldText.fieldTextSize) + 5);
-
+                
                 let lenghtX=barWidth/props.composed.length;
+                if(props.customBarWidth!==0)
+                lenghtX=props.customBarWidth/props.composed.length
                 props.composed.forEach((element2,index) => {
                 let startingX=paddingX+ barWidth*(2*element.index-1)+lenghtX*index;
                 let lenghtY=(element.barGraphArray[index]-minValue)/range*(barGraphSizeY);
@@ -123,7 +131,9 @@ const PieChartCanvas = forwardRef((props,ref) =>
                 ctx.fillStyle = element2.composedCustomColor;
                 else
                 ctx.fillStyle = element2.composedColor;
-
+                if(props.customBarWidth!==0)
+                ctx.fillRect(startingX+(barWidth-props.customBarWidth)/2,startingY,lenghtX,lenghtY);
+                else
                 ctx.fillRect(startingX,startingY,lenghtX,lenghtY);
 
                

@@ -4,6 +4,7 @@ import { CgAddR } from "react-icons/cg";
 import { FaTrash } from "react-icons/fa";
 import { IoIosArrowDown } from "react-icons/io";
 import { ThemeProvider } from "@emotion/react";
+import InfoIcon from "@material-ui/icons/Info";
 
 import {
   Button,
@@ -19,6 +20,8 @@ import {
   InputAdornment,
   Collapse,
   Switch,
+  Tooltip,
+  IconButton
 } from "@mui/material";
 import { MuiColorInput } from "mui-color-input";
 
@@ -32,6 +35,12 @@ const vectorFontSizes = utilitiesData.vectorFontSizes;
 const vectorFontFamily = utilitiesData.vectorFontFamily;
 
 function PieChart() {
+  window.addEventListener("resize", () => {
+    if (document.body.clientWidth > 767)
+      setCanvasSize(document.body.clientHeight * 0.6);
+    else
+      setCanvasSize(document.body.clientHeight * 0.4);
+  });
   const [colorPalette, setColorPalette] = useState(vectorColorPalettes[0]);
   const [theme, setTheme] = useState(PinkAndWhiteTheme);
   const canvasRef = useRef();
@@ -108,7 +117,7 @@ function PieChart() {
     }
   }
 
-  const [canvasSize, setCanvasSize] = useState(500);
+  const [canvasSize, setCanvasSize] = useState(document.body.clientWidth > 767 ? document.body.clientHeight * 0.6 : document.body.clientHeight * 0.4);
   const [canvasColor, setCanvasColor] = useState("white");
   const [pieChartPercent, setPieChartPercent] = useState(70);
 
@@ -122,22 +131,22 @@ function PieChart() {
 
   const [titleText, setTitleText] = useState({
     color: "black",
-    size: 28,
+    size: document.body.clientWidth > 767 ? 28 : 16,
     font: "Arial",
   });
   const [valuesText, setValuesText] = useState({
     color: "black",
-    size: 14,
+    size: document.body.clientWidth > 767 ? 12 : 8,
     font: "Arial",
   });
   const [namesText, setNamesText] = useState({
     color: "black",
-    size: 14,
+    size: document.body.clientWidth > 767 ? 12 : 8,
     font: "Arial",
   });
   const [legendText, setLegendText] = useState({
     color: "black",
-    size: 14,
+    size: document.body.clientWidth > 767 ? 12 : 8,
     font: "Arial",
   });
 
@@ -229,6 +238,7 @@ function PieChart() {
           <h2>Chart Details</h2>
             <div className="titleAndPalette">
               <TextField
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
                 className="titleInput"
                 label="Chart name"
                 placeholder="Type chart name here"
@@ -238,6 +248,7 @@ function PieChart() {
               <FormControl>
                 <InputLabel>Color pallette</InputLabel>
                 <Select
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                   label="colorPalette"
                   value={colorPalette.name}
                   onChange={(e) => {
@@ -296,6 +307,7 @@ function PieChart() {
                   />
                   {boolCustomColors ? (
                     <MuiColorInput
+                    size={document.body.clientWidth > 767 ? "medium" : "small"}
                       label="Slice color"
                       className="myInput"
                       value={field.pieCustomColor}
@@ -322,8 +334,8 @@ function PieChart() {
           </div>
             <div className="titleAndPalette">
               <div>
-                Create new field:
-                <CgAddR onClick={() => fieldsDispatch({ type: "add" })} />
+                <p style={{display:"inline"}}>Add slice</p>
+                <CgAddR className="myAdd" onClick={() => fieldsDispatch({ type: "add" })} />
               </div>
               <FormControlLabel
                 control={
@@ -335,8 +347,8 @@ function PieChart() {
                 label="Use custom colors"
               />
             </div>
-          <div onClick={() => setBoolDisplayOptions(!boolDisplayOptions)}>
-            Show options <IoIosArrowDown />
+          <div className="showOptions" onClick={() => setBoolDisplayOptions(!boolDisplayOptions)}>
+            <div><p style={{display:"inline"}}>Show options</p> <IoIosArrowDown className="myAdd"/></div>
           </div>
           <Collapse in={boolDisplayOptions} className="optionsContainer">
             <div className="optionsFlex">
@@ -345,6 +357,7 @@ function PieChart() {
                   <h4>Piechart options</h4>
                   
                     <TextField
+                    size={document.body.clientWidth > 767 ? "medium" : "small"}
                       type="percent"
                       value={pieChartPercent}
                       onChange={(e) => setPieChartPercent(e.target.value)}
@@ -382,6 +395,7 @@ function PieChart() {
                       className="checkBoxControlLabel"
                       control={
                         <Switch
+                        size={document.body.clientWidth > 767 ? "medium" : "small"}
                           checked={boolValueInside}
                           onClick={() => setBoolValueInside(!boolValueInside)}
                         />
@@ -393,12 +407,14 @@ function PieChart() {
                       className="checkBoxControlLabel"
                       control={
                         <Switch
+                        size={document.body.clientWidth > 767 ? "medium" : "small"}
                           checked={boolNameInside}
                           onClick={() => setBoolNameInside(!boolNameInside)}
                         />
                       }
                       label="Move names inside"
                     />
+                    <div>
                     <FormControlLabel
                       className="checkBoxControlLabel"
                       control={
@@ -409,13 +425,19 @@ function PieChart() {
                       }
                       label="Use legend"
                     />
-                  
+                    <Tooltip title="Instead of displaying the names on the piechart, they will be displayed in the right part as a pair of color and name">
+              <IconButton>
+                <InfoIcon />
+              </IconButton>
+            </Tooltip>
+            </div>
                 </div>
               </div>
               <div>
                 <div className="optionSection">
                   <h4>Canvas options</h4>
                   <TextField
+                  size={document.body.clientWidth > 767 ? "medium" : "small"}
                     value={canvasSize}
                     onChange={(e) =>
                       !isNaN(Number(e.target.value))
@@ -430,12 +452,13 @@ function PieChart() {
                     }}
                   />
                   <MuiColorInput
+                  size={document.body.clientWidth > 767 ? "medium" : "small"}
                     label="Canvas color"
                     value={canvasColor}
                     onChange={(newValue) => {
                       setCanvasColor(newValue);
                       document.documentElement.style.setProperty(
-                        "--pieChartCanvasContainerColor",
+                        "--canvasContainerColor",
                         newValue
                       );
                     }}
@@ -444,12 +467,13 @@ function PieChart() {
               </div>
             </div>
 
-            <div className="lgTextHeader">
+            <div className="textHeader">
               <h2>Text options</h2>
             </div>
             <div className="textOptions">
               <p>Title </p>
               <MuiColorInput
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
                 label="Title color"
                 value={titleText.color}
                 onChange={(newValue) => {
@@ -461,6 +485,7 @@ function PieChart() {
               <FormControl>
                 <InputLabel>Title size</InputLabel>
                 <Select
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                   label="Title size"
                   value={titleText.size}
                   onChange={(e) => {
@@ -479,6 +504,7 @@ function PieChart() {
               <FormControl>
                 <InputLabel>Title font</InputLabel>
                 <Select
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                   label="Title font"
                   value={titleText.font}
                   onChange={(e) => {
@@ -495,15 +521,17 @@ function PieChart() {
                 </Select>
               </FormControl>
               <Button
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
                 variant="outlined"
                 onClick={() =>
-                  setTitleText({ font: "Arial", size: 28, color: "black" })
+                  setTitleText({ font: "Arial", size: document.body.clientWidth > 767 ? 28 : 16, color: "black" })
                 }
               >
                 Reset to default
               </Button>
               <p>Slice names</p>
               <MuiColorInput
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
                 label="Name color"
                 value={namesText.color}
                 onChange={(newValue) => {
@@ -515,6 +543,7 @@ function PieChart() {
               <FormControl>
                 <InputLabel>Name size</InputLabel>
                 <Select
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                   label="Name size"
                   value={namesText.size}
                   onChange={(e) => {
@@ -533,6 +562,7 @@ function PieChart() {
               <FormControl>
                 <InputLabel>Name font</InputLabel>
                 <Select
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                   label="Name font"
                   value={namesText.font}
                   onChange={(e) => {
@@ -540,7 +570,6 @@ function PieChart() {
                     a.font = e.target.value;
                     setNamesText(a);
                   }}
-                  size="meidum"
                 >
                   {vectorFontFamily.map((font, index) => (
                     <MenuItem key={index} value={font}>
@@ -550,15 +579,17 @@ function PieChart() {
                 </Select>
               </FormControl>
               <Button
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
                 variant="outlined"
                 onClick={() =>
-                  setNamesText({ font: "Arial", size: 14, color: "black" })
+                  setNamesText({ font: "Arial", size: document.body.clientWidth > 767 ? 12 : 8, color: "black" })
                 }
               >
                 Reset to default
               </Button>
               <p>Slice values</p>
               <MuiColorInput
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
                 label="Value color"
                 value={valuesText.color}
                 onChange={(newValue) => {
@@ -571,6 +602,7 @@ function PieChart() {
               <FormControl>
                 <InputLabel>Value size</InputLabel>
                 <Select
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                   label="Value size"
                   value={valuesText.size}
                   onChange={(e) => {
@@ -589,6 +621,7 @@ function PieChart() {
               <FormControl>
                 <InputLabel>Value font</InputLabel>
                 <Select
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                   label="Value font"
                   value={valuesText.font}
                   onChange={(e) => {
@@ -605,9 +638,10 @@ function PieChart() {
                 </Select>
               </FormControl>
               <Button
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
                 variant="outlined"
                 onClick={() =>
-                  setValuesText({ font: "Arial", size: 14, color: "black" })
+                  setValuesText({ font: "Arial", size: document.body.clientWidth > 767 ? 12 : 8, color: "black" })
                 }
               >
                 Reset to default
@@ -615,6 +649,7 @@ function PieChart() {
               {boolLegend ? <p>Legend</p> : null}
               {boolLegend ? (
                 <MuiColorInput
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                   label="Legend color"
                   value={legendText.color}
                   onChange={(newValue) => {
@@ -628,6 +663,7 @@ function PieChart() {
                 <FormControl>
                   <InputLabel>Legend size</InputLabel>
                   <Select
+                  size={document.body.clientWidth > 767 ? "medium" : "small"}
                     label="Legend size"
                     value={legendText.size}
                     onChange={(e) => {
@@ -648,6 +684,7 @@ function PieChart() {
                 <FormControl>
                   <InputLabel>Legend font</InputLabel>
                   <Select
+                  size={document.body.clientWidth > 767 ? "medium" : "small"}
                     label="Legend font"
                     value={legendText.font}
                     onChange={(e) => {
@@ -666,9 +703,10 @@ function PieChart() {
               ) : null}
               {boolLegend ? (
                 <Button
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                   variant="outlined"
                   onClick={() =>
-                    setLegendText({ font: "Arial", size: 14, color: "black" })
+                    setLegendText({ font: "Arial", size: document.body.clientWidth > 767 ? 12 : 8, color: "black" })
                   }
                 >
                   Reset to default

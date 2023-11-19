@@ -20,8 +20,8 @@
       "cubeColors": ["white", "pink", "magenta"],
       "css": {
         "itemColor": "rgb(255, 222, 227)",
-        "pieChartContainerColor": "rgba(239, 239, 239)",
-        "pieChartCanvasContainerColor": "white",
+        "graphContaienrColor": "rgba(239, 239, 239)",
+        "canvasContainerColor": "white",
         "containerGradient1": "pink",
         "containerGradient2": "magenta"
       },
@@ -47,8 +47,8 @@
       "cubeColors": ["blue", "green", "darkgreen"],
       "css": {
         "itemColor": "rgb(173, 216, 230)",
-        "pieChartContainerColor": "rgba(200, 230, 201)",
-        "pieChartCanvasContainerColor": "white",
+        "graphContaienrColor": "rgba(200, 230, 201)",
+        "canvasContainerColor": "white",
         "containerGradient1": "lightblue",
         "containerGradient2": "lightgreen"
       },
