@@ -1,7 +1,7 @@
 .bgInputValue{
     display: inline-grid;
     column-gap: 2vw;
-    grid-template-columns: repeat(auto-fill, 6vw);
+    grid-template-columns: repeat(auto-fill, 8vw);
     justify-items: center;
     align-items: center;
     text-align: center;
@@ -11,7 +11,7 @@
 }
 
 .bgInputValue>*{
-    min-width: 6vw ;
+    min-width: 8vw ;
 }
 .bgBarFontAndSize{
     display: flex;
@@ -25,4 +25,28 @@
     grid-template-columns: repeat(5, 22%);
     gap: 3%;
     align-items: start;
+}
+@media only screen and (max-width: 767px) {
+    .bgInputValue{
+        column-gap: 3vw;
+        grid-template-columns: repeat(auto-fill, 19vw);
+    }
+    
+    .bgInputValue>*{
+        min-width: 19vw ;
+    }
+    .bgBarFontAndSize{
+        display: grid;
+        row-gap: 2vh;
+    }
+}
+@media only screen and (min-width: 768px) and (max-width: 1300px) {
+    .bgInputValue{
+        column-gap: 3vw;
+        grid-template-columns: repeat(auto-fill, 20vw);
+    }
+    
+    .bgInputValue>*{
+        min-width: 20vw ;
+    }
 }

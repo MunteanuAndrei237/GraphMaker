@@ -46,16 +46,16 @@
       ],
       "cubeColors": ["blue", "green", "darkgreen"],
       "css": {
-        "itemColor": "rgb(173, 216, 230)",
-        "graphContaienrColor": "rgba(200, 230, 201)",
+        "itemColor": "rgb(100, 100, 239)",
+        "graphContainerColor": "rgb(230, 230, 255)",
         "canvasContainerColor": "white",
         "containerGradient1": "lightblue",
-        "containerGradient2": "lightgreen"
+        "containerGradient2": "darkblue"
       },
       "themeString": "BlueAndWhiteTheme"
     }
   ],
-  "vectorFontSizes": [8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 28, 32],
+  "vectorFontSizes": [6, 8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72],
   "vectorFontFamily": [
     "Arial",
     "Helvetica",

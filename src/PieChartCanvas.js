@@ -8,7 +8,7 @@ const PieChartCanvas =forwardRef((props, ref) => {
   var legendXSize;
   props.boolLegend ? legendXSize=50 : legendXSize=0;
   var canvasXSize=Number(props.canvasSize);
-  var canvasYSize=Number(props.canvasSize+Number(props.titleText.size));
+  var canvasYSize=Number(props.canvasSize+Number(props.titleText.size)*0.3);
   var pieChartXSize=canvasXSize*(props.pieChartPercent/100);
   var pieChartYSize=canvasYSize*(props.pieChartPercent/100);
   var xPadding=(canvasXSize-pieChartXSize)/2;

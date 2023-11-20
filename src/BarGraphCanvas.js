@@ -5,23 +5,23 @@ const PieChartCanvas = forwardRef((props,ref) =>
 {
     const draw = ctx => { 
         var dimx=props.canvasSizeX;
-        var dimy=props.canvasSizeY-100;
-        var barGraphSizeX=dimx*0.7;
+        var dimy=props.canvasSizeY-30;
+        var barGraphSizeX=dimx*0.8;
         var barGraphSizeY=dimy*0.8;
         var paddingX=(dimx-barGraphSizeX)/2;
-        var paddingY=(dimy-barGraphSizeY)/2+100;
+        var paddingY=(dimy-barGraphSizeY)/2+30;
         var barWidth=barGraphSizeX/(props.fieldsObejct.length*2+1);
         var maxValue=0;
         var minValue=0;
         var cubeSize=10;
         var cubeJump=30;
         
-        
         if (!props.boolComposedValues){
         props.fieldsObejct.forEach(element => {
             maxValue=Math.max(maxValue,element.barGraphValue);
         });
         }
+        
         else
         {
             props.fieldsObejct.forEach(element => {
@@ -30,12 +30,10 @@ const PieChartCanvas = forwardRef((props,ref) =>
                 });
             });
         }
-
         if (props.customMin!==null && props.customMin!==undefined)
             minValue=props.customMin;
         if (props.customMax!==null && props.customMax!==undefined)
             maxValue=props.customMax;
-        
         var range=maxValue-minValue;
         var numbersOfScale=Math.floor(Math.log10(range/2.5));
         
@@ -52,7 +50,7 @@ const PieChartCanvas = forwardRef((props,ref) =>
         var scale=Math.floor(Math.floor(range/scales)/rounding)*rounding;
         
         ctx.fillStyle = props.canvasColor;
-        ctx.fillRect(0, 0, dimx, dimy+100);
+        ctx.fillRect(0, 0, dimx, dimy+30);
 
         ctx.fillStyle =  props.fieldTextTitle.fieldTextColor;
         ctx.font = props.fieldTextTitle.fieldTextSize+"px "+ props.fieldTextTitle.fieldTextFont;

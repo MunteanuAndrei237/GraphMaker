@@ -1,5 +1,5 @@
-import { useState, useRef, useReducer } from "react";
-
+import _debounce from 'lodash/debounce';
+import { useState, useRef, useReducer , useEffect } from "react";
 import { CgAddR } from "react-icons/cg";
 import { FaTrash } from "react-icons/fa";
 import { IoIosArrowDown } from "react-icons/io";
@@ -35,12 +35,31 @@ const vectorFontSizes = utilitiesData.vectorFontSizes;
 const vectorFontFamily = utilitiesData.vectorFontFamily;
 
 function PieChart() {
-  window.addEventListener("resize", () => {
-    if (document.body.clientWidth > 767)
-      setCanvasSize(document.body.clientHeight * 0.6);
-    else
-      setCanvasSize(document.body.clientHeight * 0.4);
+  const handleResize = _debounce(() =>  {
+    setCanvasSize(document.body.clientWidth > 1300 ? document.body.clientHeight * 0.6 :  document.body.clientHeight * 0.4);
+    var a = {...namesText};
+    var b = {...valuesText};
+    var c = {...titleText};
+    var d = {...legendText};
+    a.size = document.body.clientWidth > 1300 ? 12 : document.body.clientWidth > 767 ?10 : 8;
+    b.size = document.body.clientWidth > 1300 ? 12 : document.body.clientWidth > 767 ?10 : 8;
+    c.size = document.body.clientWidth > 1300 ? 28 : document.body.clientWidth > 767 ?14 : 16;
+    d.size = document.body.clientWidth > 1300 ? 12 : document.body.clientWidth > 767 ?10 : 8;
+    setNamesText(a);
+    setValuesText(b);
+    setTitleText(c);
+    setLegendText(d);
   });
+
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [handleResize]);
+
   const [colorPalette, setColorPalette] = useState(vectorColorPalettes[0]);
   const [theme, setTheme] = useState(PinkAndWhiteTheme);
   const canvasRef = useRef();
@@ -117,7 +136,7 @@ function PieChart() {
     }
   }
 
-  const [canvasSize, setCanvasSize] = useState(document.body.clientWidth > 767 ? document.body.clientHeight * 0.6 : document.body.clientHeight * 0.4);
+  const [canvasSize, setCanvasSize] = useState(document.body.clientWidth > 1300 ? document.body.clientHeight * 0.6 :  document.body.clientHeight * 0.4);
   const [canvasColor, setCanvasColor] = useState("white");
   const [pieChartPercent, setPieChartPercent] = useState(70);
 
@@ -131,22 +150,26 @@ function PieChart() {
 
   const [titleText, setTitleText] = useState({
     color: "black",
-    size: document.body.clientWidth > 767 ? 28 : 16,
+    size:  document.body.clientWidth > 1300 ? 28 : document.body.clientWidth > 767
+    ?14 : 16,
     font: "Arial",
   });
   const [valuesText, setValuesText] = useState({
     color: "black",
-    size: document.body.clientWidth > 767 ? 12 : 8,
+    size:  document.body.clientWidth > 1300 ? 12 : document.body.clientWidth > 767
+    ?10 : 8,
     font: "Arial",
   });
   const [namesText, setNamesText] = useState({
     color: "black",
-    size: document.body.clientWidth > 767 ? 12 : 8,
+    size:  document.body.clientWidth > 1300 ? 12 : document.body.clientWidth > 767
+    ?10 : 8,
     font: "Arial",
   });
   const [legendText, setLegendText] = useState({
     color: "black",
-    size: document.body.clientWidth > 767 ? 12 : 8,
+    size:  document.body.clientWidth > 1300 ? 12 : document.body.clientWidth > 767
+    ?10 : 8,
     font: "Arial",
   });
 
@@ -324,6 +347,7 @@ function PieChart() {
                     />
                   ) : null}
                   <FaTrash
+                    className="myAdd"
                     onClick={() =>
                       fields.length !== 1 ? deleteField(field.index) : null
                     }
@@ -434,8 +458,20 @@ function PieChart() {
                 </div>
               </div>
               <div>
-                <div className="optionSection">
+                <div className="optionSection2">
                   <h4>Canvas options</h4>
+                  <MuiColorInput
+                  size={document.body.clientWidth > 767 ? "medium" : "small"}
+                    label="Canvas color"
+                    value={canvasColor}
+                    onChange={(newValue) => {
+                      setCanvasColor(newValue);
+                      document.documentElement.style.setProperty(
+                        "--canvasContainerColor",
+                        newValue
+                      );
+                    }}
+                  />
                   <TextField
                   size={document.body.clientWidth > 767 ? "medium" : "small"}
                     value={canvasSize}
@@ -451,18 +487,15 @@ function PieChart() {
                       ),
                     }}
                   />
-                  <MuiColorInput
-                  size={document.body.clientWidth > 767 ? "medium" : "small"}
-                    label="Canvas color"
-                    value={canvasColor}
-                    onChange={(newValue) => {
-                      setCanvasColor(newValue);
-                      document.documentElement.style.setProperty(
-                        "--canvasContainerColor",
-                        newValue
-                      );
-                    }}
-                  />
+                  <Button
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                variant="outlined"
+                onClick={() => {
+                  setCanvasSize(document.body.clientWidth > 1300 ? document.body.clientHeight * 0.6 :  document.body.clientHeight * 0.4);
+                }}
+              >
+                Resize to normal
+              </Button>
                 </div>
               </div>
             </div>
@@ -524,7 +557,8 @@ function PieChart() {
               size={document.body.clientWidth > 767 ? "medium" : "small"}
                 variant="outlined"
                 onClick={() =>
-                  setTitleText({ font: "Arial", size: document.body.clientWidth > 767 ? 28 : 16, color: "black" })
+                  setTitleText({ font: "Arial", size:  document.body.clientWidth > 1300 ? 28 : document.body.clientWidth > 767
+                  ?14 : 16, color: "black" })
                 }
               >
                 Reset to default
@@ -582,7 +616,8 @@ function PieChart() {
               size={document.body.clientWidth > 767 ? "medium" : "small"}
                 variant="outlined"
                 onClick={() =>
-                  setNamesText({ font: "Arial", size: document.body.clientWidth > 767 ? 12 : 8, color: "black" })
+                  setNamesText({ font: "Arial", size:  document.body.clientWidth > 1300 ? 12 : document.body.clientWidth > 767
+                  ?10 : 8, color: "black" })
                 }
               >
                 Reset to default
@@ -641,7 +676,8 @@ function PieChart() {
               size={document.body.clientWidth > 767 ? "medium" : "small"}
                 variant="outlined"
                 onClick={() =>
-                  setValuesText({ font: "Arial", size: document.body.clientWidth > 767 ? 12 : 8, color: "black" })
+                  setValuesText({ font: "Arial", size:  document.body.clientWidth > 1300 ? 12 : document.body.clientWidth > 767
+                  ?10 : 8, color: "black" })
                 }
               >
                 Reset to default
@@ -706,7 +742,8 @@ function PieChart() {
                 size={document.body.clientWidth > 767 ? "medium" : "small"}
                   variant="outlined"
                   onClick={() =>
-                    setLegendText({ font: "Arial", size: document.body.clientWidth > 767 ? 12 : 8, color: "black" })
+                    setLegendText({ font: "Arial", size:  document.body.clientWidth > 1300 ? 12 : document.body.clientWidth > 767
+                    ?10 : 8, color: "black" })
                   }
                 >
                   Reset to default

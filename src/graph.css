@@ -8,6 +8,11 @@
 .myInfo{
     padding:0 !important;
 }
+.topRightcorner{
+    height: 190%;
+    width:135%;
+    background-color: var(--graphContaienrColor);
+}
 .GraphContainer {
     display: grid;
     grid-template-columns: 47% 47%;
@@ -15,7 +20,7 @@
     border: 1rem solid #aaaaff;
     border-image: repeating-linear-gradient(45deg, transparent, transparent 5px, #aaaaff 6px, #aaaaff 15px, transparent 16px, transparent 20px) 20/1rem;
     background: var(--graphContaienrColor);
-    height: 96vh;
+    height: 100vh;
     overflow: auto;
     padding: 1.4%;
 }
@@ -29,6 +34,7 @@
     border: 5px solid;
     border-image: linear-gradient(45deg, var(--containerGradient1), var(--containerGradient2)) 1;
     grid-template-rows: 90% 10%;
+    min-height: 90%;
 }
 
 .titleInput {
@@ -39,7 +45,7 @@
     display: flex;
     justify-content: space-between;
     width: 90%;
-    margin: 1vh;
+    margin-top: 1vh;
     align-items: center;
 }
 
@@ -114,7 +120,9 @@
     }
 .myCheckbox{
     padding-right: 0 !important;
-
+}
+.titleAndPalette {
+    width: 100%;
 }
 .myLabel{
     margin: 0;
@@ -122,14 +130,55 @@
 .optionSection{
     row-gap: 2vh;
 }
-.xInputTrash{
-    top:0px;
-}
 .myAdd{
     height:1rem ;
 }
 .canvasContainer{
-    margin-top: 2vh;
+    margin-top: 0vh;
     height: 50vh;
 }
+.fieldsContainer {
+    width: 100%;
+    max-height: 30vh;
+}
+.inputValues {
+    row-gap: 1vh;
+}
+.textOptions{
+    margin-bottom: 2vh;
+}
+.lastItem{
+    width:7vw;
+    max-width: 7vw;
+    min-width:7vw !important;
+}
+.css-ejicsm-MuiButtonBase-root-MuiButton-root{
+    width: 12px !important;
+    height: 12px !important;
+}
+.css-4ypkia-MuiInputBase-root-MuiOutlinedInput-root{
+    padding-left: 5px !important;
+}
+}
+@media only screen and (min-width: 768px) and (max-width: 1300px) {
+
+    .GraphContainer {
+        grid-template-columns: 100%;
+        border-image: repeating-linear-gradient(45deg, transparent, transparent 5px, #aaaaff 6px, #aaaaff 15px, transparent 16px, transparent 20px) 20/0.5rem;
+        width: 100vw;
+    }
+    .canvasContainer{
+        margin-top: 0vh;
+        height: 50vh;
+    }
+    .titleAndPalette {
+        width: 100%;
+    }
+    .fieldsContainer {
+        width: 100%;
+        max-height: 34vh;
+    }
+    .textOptions{
+        margin-bottom: 2vh;
+    }
 }

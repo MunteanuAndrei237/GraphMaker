@@ -1,7 +1,11 @@
 :root{
     --chartFormSize : 36;
 }
-
+.optionSection2{
+  display: grid;
+  row-gap: 2vh;
+  justify-items: start;
+}
 .tableItem{
     display: grid !important;
     justify-items: center;
@@ -65,4 +69,27 @@ row-gap: 0px;
   }
   }
 
+  @media only screen and (min-width: 768px) and (max-width: 1300px) {
+    .tableItem{
+      display: grid !important;
+      justify-items: center;
+      align-items: center;
+      grid-template-columns: repeat(calc(var(--chartFormSize)/9), 20.5vw);
+      background-color: var(--itemColor);
+      column-gap: 3vw;
+    }
+  
+    .tableHeader{
+      display: grid;
+      justify-items: center;
+      align-items: center;
+      grid-template-columns: repeat( calc(var(--chartFormSize)/9), 19vw);
+      margin-top: 1%;
+      margin-bottom: 1%;
+      column-gap: 5vw;
+    }
+    .fieldsContainer{
 
+      row-gap: 1vh;
+    }
+  }
