@@ -1,47 +1,51 @@
-:root{
-    --chartFormSize : 36;
+:root {
+  --chartFormSize: 36;
 }
-.optionSection2{
+
+.optionSection2 {
   display: grid;
   row-gap: 2vh;
   justify-items: start;
 }
-.tableItem{
-    display: grid !important;
-    justify-items: center;
-    align-items: center;
-    grid-template-columns: repeat(calc(var(--chartFormSize)/9), 7vw);
-    background-color: var(--itemColor);
-    column-gap: 2vw;
+
+.tableItem {
+  display: grid !important;
+  justify-items: center;
+  align-items: center;
+  grid-template-columns: repeat(calc(var(--chartFormSize)/9), 7vw);
+  background-color: var(--itemColor);
+  column-gap: 2vw;
+}
+
+.tableHeader {
+  display: grid;
+  justify-items: center;
+  align-items: center;
+  grid-template-columns: repeat(calc(var(--chartFormSize)/9), 7vw);
+  margin-top: 1%;
+  margin-bottom: 1%;
+  column-gap: 2.2vw;
+}
+
+.optionsFlex {
+  display: grid;
+  grid-template-columns: repeat(2, 50%);
+  gap: 1%;
+  width: 100%;
+}
+
+.fieldsContainer {
+  margin-top: 2%;
+  display: grid;
+  row-gap: 2vh;
+}
+
+@media only screen and (max-width: 767px) {
+  .fieldsContainer {
+    width: auto;
   }
 
-  .tableHeader{
-    display: grid;
-    justify-items: center;
-    align-items: center;
-    grid-template-columns: repeat( calc(var(--chartFormSize)/9), 7vw);
-    margin-top: 1%;
-    margin-bottom: 1%;
-    column-gap: 2.2vw;
-  }
-
-  .optionsFlex{
-    display: grid;
-    grid-template-columns: repeat(2, 50%);
-    gap: 1%;
-    width: 100%;
-  }
-
-  .fieldsContainer{
-    margin-top: 2%;
-    display: grid;
-    row-gap: 2vh;
-  }
-  @media only screen and (max-width: 767px) {
-    .fieldsContainer{
-      width: auto;
-    }
-.tableItem{
+  .tableItem {
     display: grid !important;
     justify-items: center;
     align-items: center;
@@ -50,46 +54,48 @@
     column-gap: 3vw;
   }
 
-  .tableHeader{
+  .tableHeader {
     display: grid;
     justify-items: center;
     align-items: center;
-    grid-template-columns: repeat( calc(var(--chartFormSize)/9), 16vw);
+    grid-template-columns: repeat(calc(var(--chartFormSize)/9), 16vw);
     margin-top: 1%;
     margin-bottom: 1%;
     column-gap: 5vw;
   }
-  .optionSection
-  {
-row-gap: 0px;
+
+  .optionSection {
+    row-gap: 0px;
   }
-  .fieldsContainer{
+
+  .fieldsContainer {
 
     row-gap: 1vh;
   }
+}
+
+@media only screen and (min-width: 768px) and (max-width: 1300px) {
+  .tableItem {
+    display: grid !important;
+    justify-items: center;
+    align-items: center;
+    grid-template-columns: repeat(calc(var(--chartFormSize)/9), 20.5vw);
+    background-color: var(--itemColor);
+    column-gap: 3vw;
   }
 
-  @media only screen and (min-width: 768px) and (max-width: 1300px) {
-    .tableItem{
-      display: grid !important;
-      justify-items: center;
-      align-items: center;
-      grid-template-columns: repeat(calc(var(--chartFormSize)/9), 20.5vw);
-      background-color: var(--itemColor);
-      column-gap: 3vw;
-    }
-  
-    .tableHeader{
-      display: grid;
-      justify-items: center;
-      align-items: center;
-      grid-template-columns: repeat( calc(var(--chartFormSize)/9), 19vw);
-      margin-top: 1%;
-      margin-bottom: 1%;
-      column-gap: 5vw;
-    }
-    .fieldsContainer{
-
-      row-gap: 1vh;
-    }
+  .tableHeader {
+    display: grid;
+    justify-items: center;
+    align-items: center;
+    grid-template-columns: repeat(calc(var(--chartFormSize)/9), 19vw);
+    margin-top: 1%;
+    margin-bottom: 1%;
+    column-gap: 5vw;
   }
+
+  .fieldsContainer {
+
+    row-gap: 1vh;
+  }
+}

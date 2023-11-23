@@ -25,7 +25,8 @@ const LineGraphCanvas = forwardRef((props, ref) => {
       });
     });
 
-    if (props.customMin !== null && props.customMin !== undefined) minValue = props.customMin;
+    if (props.customMin !== null && props.customMin !== undefined)
+      minValue = props.customMin;
     else {
       props.fieldsObejct.forEach((array) => {
         array.lineGraphYValues.forEach((element) => {
@@ -33,7 +34,8 @@ const LineGraphCanvas = forwardRef((props, ref) => {
         });
       });
     }
-    if (props.customMax !== null && props.customMax !== undefined) maxValue = props.customMax;
+    if (props.customMax !== null && props.customMax !== undefined)
+      maxValue = props.customMax;
     else {
       props.fieldsObejct.forEach((array) => {
         array.lineGraphYValues.forEach((element) => {
@@ -42,7 +44,7 @@ const LineGraphCanvas = forwardRef((props, ref) => {
       });
     }
 
-    var xJump = canvasX / props.xValues.length; //you can add padding
+    var xJump = canvasX / props.xValues.length;
 
     var range = maxValue - minValue;
     maxValue += 1;
@@ -109,7 +111,6 @@ const LineGraphCanvas = forwardRef((props, ref) => {
 
     ctx.font = props.yValuesText.size + "px " + props.yValuesText.font;
     ctx.lineWidth = props.line.size;
-
     props.fieldsObejct.forEach((array) => {
       array.lineGraphYValues.forEach((element, index) => {
         let element2;
@@ -177,7 +178,6 @@ const LineGraphCanvas = forwardRef((props, ref) => {
       );
       ctx.font =
         "bold " + props.scalesText.size + "px " + props.xValuesText.font;
-      console.log();
       ctx.fillText(
         props.yName,
         (paddingX - ctx.measureText(props.yName).width) / 2,
@@ -199,8 +199,6 @@ const LineGraphCanvas = forwardRef((props, ref) => {
   useEffect(() => {
     const canvas = ref.current;
     const context = canvas.getContext("2d");
-
-    //Our draw come here
     draw(context);
   });
 
@@ -214,5 +212,3 @@ const LineGraphCanvas = forwardRef((props, ref) => {
 });
 
 export default LineGraphCanvas;
-
-//add scaling system

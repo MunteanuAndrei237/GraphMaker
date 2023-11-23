@@ -1,4 +1,3 @@
-import './App.css';
 import StartPage from './StartPage';
 
 function App() {

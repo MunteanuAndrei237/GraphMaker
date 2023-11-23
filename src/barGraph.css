@@ -1,4 +1,4 @@
-.bgInputValue{
+.bgInputValue {
     display: inline-grid;
     column-gap: 2vw;
     grid-template-columns: repeat(auto-fill, 8vw);
@@ -10,43 +10,48 @@
     grid-auto-flow: column;
 }
 
-.bgInputValue>*{
-    min-width: 8vw ;
+.bgInputValue>* {
+    min-width: 8vw;
 }
-.bgBarFontAndSize{
+
+.bgBarFontAndSize {
     display: flex;
     justify-content: space-between;
     flex-direction: row;
     width: 100%;
 }
-.bgNonTextOptions{
-    margin-top:2vh;
+
+.bgNonTextOptions {
+    margin-top: 2vh;
     display: grid;
     grid-template-columns: repeat(5, 22%);
     gap: 3%;
     align-items: start;
 }
+
 @media only screen and (max-width: 767px) {
-    .bgInputValue{
+    .bgInputValue {
         column-gap: 3vw;
         grid-template-columns: repeat(auto-fill, 19vw);
     }
-    
-    .bgInputValue>*{
-        min-width: 19vw ;
+
+    .bgInputValue>* {
+        min-width: 19vw;
     }
-    .bgBarFontAndSize{
+
+    .bgBarFontAndSize {
         display: grid;
         row-gap: 2vh;
     }
 }
+
 @media only screen and (min-width: 768px) and (max-width: 1300px) {
-    .bgInputValue{
+    .bgInputValue {
         column-gap: 3vw;
         grid-template-columns: repeat(auto-fill, 20vw);
     }
-    
-    .bgInputValue>*{
-        min-width: 20vw ;
+
+    .bgInputValue>* {
+        min-width: 20vw;
     }
 }

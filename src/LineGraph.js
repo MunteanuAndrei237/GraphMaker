@@ -1,4 +1,4 @@
-import _debounce from 'lodash/debounce';
+import _debounce from "lodash/debounce";
 import { useState, useRef, useReducer, useEffect } from "react";
 import { CgAddR } from "react-icons/cg";
 import { FaTrash } from "react-icons/fa";
@@ -36,31 +36,53 @@ var globalMin = 920;
 var globalMax = 2920;
 
 function LineGraph() {
-  const handleResize = _debounce(() =>  {
-    setCanvasSizeX(document.body.clientWidth > 1300 ? document.body.clientWidth * 0.42 : document.body.clientWidth > 767 ? document.body.clientWidth * 0.8 : document.body.clientWidth * 0.9);
+  const handleResize = _debounce(() => {
+    setCanvasSizeX(
+      document.body.clientWidth > 1300
+        ? document.body.clientWidth * 0.42
+        : document.body.clientWidth > 767
+        ? document.body.clientWidth * 0.8
+        : document.body.clientWidth * 0.9
+    );
     setCanvasSizeY(document.body.clientHeight * 0.4);
     var a = { ...scalesText };
-                  a.size=document.body.clientWidth > 1300 ? 12 : document.body.clientWidth > 767
-                  ?10 : 8;
+    a.size =
+      document.body.clientWidth > 1300
+        ? 12
+        : document.body.clientWidth > 767
+        ? 10
+        : 8;
     setScalesText(a);
-    var b= {...yValuesText};
-    b.size=document.body.clientWidth > 1300 ? 12 : document.body.clientWidth > 767
-                  ?10 : 8;
+    var b = { ...yValuesText };
+    b.size =
+      document.body.clientWidth > 1300
+        ? 12
+        : document.body.clientWidth > 767
+        ? 10
+        : 8;
     setYValuesText(b);
-    var c ={...xValuesText};
-    c.size=document.body.clientWidth > 1300 ? 12 : document.body.clientWidth > 767
-                  ?10 : 8;
+    var c = { ...xValuesText };
+    c.size =
+      document.body.clientWidth > 1300
+        ? 12
+        : document.body.clientWidth > 767
+        ? 10
+        : 8;
     setXValuesText(c);
-    var d ={...titleText};
-    d.size=document.body.clientWidth > 1300 ? 32 : document.body.clientWidth > 767
-                  ?24 : 18;
+    var d = { ...titleText };
+    d.size =
+      document.body.clientWidth > 1300
+        ? 32
+        : document.body.clientWidth > 767
+        ? 24
+        : 18;
     setTitleText(d);
   });
   useEffect(() => {
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, [handleResize]);
 
@@ -68,7 +90,13 @@ function LineGraph() {
   const [theme, setTheme] = useState(PinkAndWhiteTheme);
   const canvasRef = useRef();
 
-
+  useEffect(() => {
+    for (const key in colorPalette.css)
+      document.documentElement.style.setProperty(
+        "--" + key,
+        colorPalette.css[key]
+      );
+  });
 
   const initialFields = [
     {
@@ -109,7 +137,6 @@ function LineGraph() {
           },
         ];
       case "change":
-        console.log("ppp");
         const { indexC, keyC, valueC } = action.payload;
         const newStateC = [...state];
         newStateC[indexC][keyC] = valueC;
@@ -134,7 +161,7 @@ function LineGraph() {
       case "addX":
         const newStateAX = [...state];
         newStateAX.forEach((element) => {
-          while (element.lineGraphYValues.length <= xValues.length)
+          while (element.lineGraphYValues.length < xValues.length)
             element.lineGraphYValues.push(0);
         });
         return newStateAX;
@@ -161,13 +188,21 @@ function LineGraph() {
   const [boolDisplayOptions, setBoolDisplayOptions] = useState(false);
 
   const [canvasSizeX, setCanvasSizeX] = useState(
-    document.body.clientWidth > 1300 ? document.body.clientWidth * 0.42 : document.body.clientWidth > 767 ? document.body.clientWidth * 0.8 : document.body.clientWidth * 0.9
+    document.body.clientWidth > 1300
+      ? document.body.clientWidth * 0.42
+      : document.body.clientWidth > 767
+      ? document.body.clientWidth * 0.8
+      : document.body.clientWidth * 0.9
   );
 
   const [canvasSizeY, setCanvasSizeY] = useState(
     document.body.clientHeight * 0.4
   );
-  const [canvasColor, setCanvasColor] = useState("white");
+  const [canvasColor, setCanvasColor] = useState(
+    getComputedStyle(document.documentElement).getPropertyValue(
+      "--canvasContainerColor"
+    )
+  );
   const [xName, setXName] = useState("Year");
   const [yName, setYName] = useState("Platform");
 
@@ -176,26 +211,42 @@ function LineGraph() {
   );
   const [xValuesText, setXValuesText] = useState({
     font: "Arial",
-    size:  document.body.clientWidth > 1300 ? 12 : document.body.clientWidth > 767
-    ?10 : 8,
+    size:
+      document.body.clientWidth > 1300
+        ? 12
+        : document.body.clientWidth > 767
+        ? 10
+        : 8,
     color: "black",
   });
   const [yValuesText, setYValuesText] = useState({
     font: "Arial",
-    size:  document.body.clientWidth > 1300 ? 12 : document.body.clientWidth > 767
-    ?10 : 8,
+    size:
+      document.body.clientWidth > 1300
+        ? 12
+        : document.body.clientWidth > 767
+        ? 10
+        : 8,
     color: "black",
   });
   const [scalesText, setScalesText] = useState({
     font: "Arial",
-    size:  document.body.clientWidth > 1300 ? 12 : document.body.clientWidth > 767
-    ?10 : 8,
+    size:
+      document.body.clientWidth > 1300
+        ? 12
+        : document.body.clientWidth > 767
+        ? 10
+        : 8,
     color: "black",
   });
   const [titleText, setTitleText] = useState({
     font: "Arial",
-    size:  document.body.clientWidth > 1300 ? 32 : document.body.clientWidth > 767
-    ?24 : 18,
+    size:
+      document.body.clientWidth > 1300
+        ? 32
+        : document.body.clientWidth > 767
+        ? 24
+        : 18,
     color: "black",
   });
 
@@ -276,7 +327,7 @@ function LineGraph() {
   }
 
   const createNewField = () => {
-    globalMin=0;
+    globalMin = 0;
     document.documentElement.style.setProperty(
       "--barGraphFormSize",
       parseInt(
@@ -289,8 +340,11 @@ function LineGraph() {
   };
 
   function createXValue() {
-    globalMin=0;
-    setXValues((prevXValues) => [...prevXValues, prevXValues[prevXValues.length - 1] + 1]);
+    globalMin = 0;
+    setXValues((prevXValues) => [
+      ...prevXValues,
+      prevXValues[prevXValues.length - 1] + 1,
+    ]);
     fieldsDispatch({ type: "addX" });
   }
   function deleteField(ind) {
@@ -329,7 +383,7 @@ function LineGraph() {
         <h2>Graph Details</h2>
         <div className="titleAndPalette">
           <TextField
-          size={document.body.clientWidth > 767 ? "medium" : "small"}
+            size={document.body.clientWidth > 767 ? "medium" : "small"}
             className="titleInput"
             label="Title"
             value={lineGraphTitle}
@@ -338,7 +392,7 @@ function LineGraph() {
           <FormControl>
             <InputLabel>Color pallette</InputLabel>
             <Select
-            size={document.body.clientWidth > 767 ? "medium" : "small"}
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
               label="colorPalette"
               value={colorPalette.name}
               onChange={(e) => {
@@ -357,8 +411,7 @@ function LineGraph() {
         </div>
         <div className="fieldsContainer">
           <div className="inputValue">
-            <div className="topRightcorner">
-            </div>
+            <div className="topRightcorner"></div>
             {fields.map((field) => (
               <div key={field.index} className="xInput">
                 <div className="xInputAndColor">
@@ -378,7 +431,9 @@ function LineGraph() {
                   />
                   {boolCustomColors ? (
                     <MuiColorInput
-                    size={document.body.clientWidth > 767 ? "medium" : "small"}
+                      size={
+                        document.body.clientWidth > 767 ? "medium" : "small"
+                      }
                       label="Line color"
                       value={field.lineGraphCustomColor}
                       onChange={(newValue) =>
@@ -402,14 +457,16 @@ function LineGraph() {
                 />
               </div>
             ))}
-            <CgAddR className="myAdd lastItem" onClick={() => createNewField()} />
+            <CgAddR
+              className="myAdd lastItem"
+              onClick={() => createNewField()}
+            />
           </div>
 
           <div className="inputValues">
             {xValues.map((xValue, index) => (
               <div key={index} className="inputValue">
                 <Input
-                
                   placeholder="Interval marker"
                   value={xValue}
                   onChange={(e) => {
@@ -420,7 +477,7 @@ function LineGraph() {
                 />
                 {fields.map((field) => (
                   <TextField
-                  size={document.body.clientWidth > 767 ? "medium" : "small"}
+                    size={document.body.clientWidth > 767 ? "medium" : "small"}
                     value={field.lineGraphYValues[index]}
                     onChange={(e) =>
                       fieldsDispatch({
@@ -437,7 +494,7 @@ function LineGraph() {
                   />
                 ))}
                 <FaTrash
-                className="myAdd lastItem"
+                  className="myAdd lastItem"
                   onClick={() =>
                     xValues.length !== 2 ? deleteXValue(index) : null
                   }
@@ -471,7 +528,8 @@ function LineGraph() {
           onClick={() => setBoolDisplayOptions(!boolDisplayOptions)}
         >
           <div>
-            <p style={{display:"inline"}}>Show options</p> <IoIosArrowDown className="myAdd"/>
+            <p style={{ display: "inline" }}>Show options</p>{" "}
+            <IoIosArrowDown className="myAdd" />
           </div>
         </div>
         <Collapse in={boolDisplayOptions} className="optionsContainer">
@@ -479,7 +537,7 @@ function LineGraph() {
             <div className="optionSection">
               <h4>Canvas options</h4>
               <TextField
-              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                 label="Canvas width"
                 value={canvasSizeX}
                 onChange={(e) => {
@@ -492,7 +550,7 @@ function LineGraph() {
                 }}
               />
               <TextField
-              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                 label="Canvas height"
                 value={canvasSizeY}
                 onChange={(e) => {
@@ -505,19 +563,28 @@ function LineGraph() {
                 }}
               />
               <MuiColorInput
-              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                 label="Canvas color"
                 value={canvasColor}
-                onChange={(newValue) => {setCanvasColor(newValue);document.documentElement.style.setProperty(
-                  "--canvasContainerColor",
-                  newValue
-                );}}
+                onChange={(newValue) => {
+                  setCanvasColor(newValue);
+                  document.documentElement.style.setProperty(
+                    "--canvasContainerColor",
+                    newValue
+                  );
+                }}
               />
               <Button
-              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                 variant="outlined"
                 onClick={() => {
-                  setCanvasSizeX(document.body.clientWidth > 1300 ? document.body.clientWidth * 0.42 : document.body.clientWidth > 767 ? document.body.clientWidth * 0.8 : document.body.clientWidth * 0.9)
+                  setCanvasSizeX(
+                    document.body.clientWidth > 1300
+                      ? document.body.clientWidth * 0.42
+                      : document.body.clientWidth > 767
+                      ? document.body.clientWidth * 0.8
+                      : document.body.clientWidth * 0.9
+                  );
                   setCanvasSizeY(document.body.clientHeight * 0.4);
                 }}
               >
@@ -550,7 +617,7 @@ function LineGraph() {
                 label="Show vertical lines"
               />
               <MuiColorInput
-              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                 disabled={!boolDisplayXLines && !boolDisplayYLines}
                 label="Grid color"
                 value={grid.color}
@@ -561,7 +628,7 @@ function LineGraph() {
                 }}
               />
               <TextField
-              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                 disabled={!boolDisplayXLines && !boolDisplayYLines}
                 label="Grid width"
                 value={grid.size}
@@ -577,7 +644,7 @@ function LineGraph() {
                 }}
               />
               <Button
-              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                 disabled={!boolDisplayXLines && !boolDisplayYLines}
                 variant="outlined"
                 onClick={() => setGrid({ size: 1, color: "grey" })}
@@ -588,7 +655,7 @@ function LineGraph() {
             <div className="optionSection">
               <h4>Axis options</h4>
               <TextField
-              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                 label="Horizontal Axis Label"
                 value={xName}
                 onChange={(e) => {
@@ -596,7 +663,7 @@ function LineGraph() {
                 }}
               />
               <TextField
-              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                 label="Vertical Axis Label"
                 value={yName}
                 onChange={(e) => {
@@ -614,7 +681,7 @@ function LineGraph() {
                 }
                 label="Show labels"
               />
-              <div style={{display:"flex"}}>
+              <div style={{ display: "flex" }}>
                 <FormControlLabel
                   className="myLabel"
                   control={
@@ -636,7 +703,7 @@ function LineGraph() {
             <div className="optionSection">
               <h4>Trend line options</h4>
               <TextField
-              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                 label="Line width"
                 value={line.size}
                 onChange={(e) => {
@@ -651,7 +718,7 @@ function LineGraph() {
                 }}
               />
               <TextField
-              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                 label="Point size"
                 value={line.pointSize}
                 onChange={(e) => {
@@ -666,7 +733,7 @@ function LineGraph() {
                 }}
               />
               <Button
-               size={document.body.clientWidth > 767 ? "medium" : "small"}
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                 variant="outlined"
                 onClick={() => setLine({ pointSize: 4, size: 4 })}
               >
@@ -674,7 +741,7 @@ function LineGraph() {
               </Button>
             </div>
             <div className="optionSection">
-              <h4 style={{display:"flex"}}>
+              <h4 style={{ display: "flex" }}>
                 Custom range
                 <Tooltip title="Ensure that the highest boundary exceeds the bar values and the lowest boundary falls below the lowest bar value. This practice is strongly discouraged and may lead to unexpected behavior.">
                   <IconButton className="myInfo">
@@ -683,7 +750,7 @@ function LineGraph() {
                 </Tooltip>
               </h4>
               <TextField
-              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                 error={customMin === undefined}
                 helperText={
                   customMin === undefined
@@ -696,7 +763,7 @@ function LineGraph() {
                 onBlur={(e) => handleMin(e)}
               />
               <TextField
-              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                 value={unusedMax}
                 error={customMax === undefined}
                 helperText={
@@ -709,7 +776,7 @@ function LineGraph() {
                 onBlur={(e) => handleMax(e)}
               />
               <Button
-              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                 variant="outlined"
                 onClick={() => {
                   setCustomMax(null);
@@ -728,7 +795,7 @@ function LineGraph() {
           <div className="textOptions">
             <p>Horizontal values</p>
             <MuiColorInput
-            size={document.body.clientWidth > 767 ? "medium" : "small"}
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
               label="Horizontal values color"
               value={xValuesText.color}
               onChange={(newValue) => {
@@ -740,7 +807,7 @@ function LineGraph() {
             <FormControl>
               <InputLabel>Horizontal values size</InputLabel>
               <Select
-              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                 label="Horizontal values size"
                 value={xValuesText.size}
                 onChange={(e) => {
@@ -759,7 +826,7 @@ function LineGraph() {
             <FormControl>
               <InputLabel>Horizontal values font</InputLabel>
               <Select
-              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                 label="Horizontal values font"
                 value={xValuesText.font}
                 onChange={(e) => {
@@ -776,18 +843,26 @@ function LineGraph() {
               </Select>
             </FormControl>
             <Button
-            size={document.body.clientWidth > 767 ? "medium" : "small"}
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
               variant="outlined"
               onClick={() =>
-                setXValuesText({ font: "Arial", size: document.body.clientWidth > 1300 ? 12 : document.body.clientWidth > 767
-                ?10 : 8, color: "black" })
+                setXValuesText({
+                  font: "Arial",
+                  size:
+                    document.body.clientWidth > 1300
+                      ? 12
+                      : document.body.clientWidth > 767
+                      ? 10
+                      : 8,
+                  color: "black",
+                })
               }
             >
               Reset to default
             </Button>
             <p>Vertical values</p>
             <MuiColorInput
-            size={document.body.clientWidth > 767 ? "medium" : "small"}
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
               label="Vertical values color"
               value={yValuesText.color}
               onChange={(newValue) => {
@@ -799,7 +874,7 @@ function LineGraph() {
             <FormControl>
               <InputLabel>Vertical values size</InputLabel>
               <Select
-              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                 label="Vertical values font"
                 value={yValuesText.size}
                 onChange={(e) => {
@@ -818,7 +893,7 @@ function LineGraph() {
             <FormControl>
               <InputLabel>Vertical values font</InputLabel>
               <Select
-              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                 label="Vertical values font"
                 value={yValuesText.font}
                 onChange={(e) => {
@@ -835,18 +910,26 @@ function LineGraph() {
               </Select>
             </FormControl>
             <Button
-            size={document.body.clientWidth > 767 ? "medium" : "small"}
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
               variant="outlined"
               onClick={() =>
-                setYValuesText({ font: "Arial", size:  document.body.clientWidth > 1300 ? 12 : document.body.clientWidth > 767
-                ?10 : 8, color: "black" })
+                setYValuesText({
+                  font: "Arial",
+                  size:
+                    document.body.clientWidth > 1300
+                      ? 12
+                      : document.body.clientWidth > 767
+                      ? 10
+                      : 8,
+                  color: "black",
+                })
               }
             >
               Reset to default
             </Button>
             <p>Scales</p>
             <MuiColorInput
-            size={document.body.clientWidth > 767 ? "medium" : "small"}
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
               label="Scales color"
               value={scalesText.color}
               onChange={(newValue) => {
@@ -859,7 +942,7 @@ function LineGraph() {
               <InputLabel>Scales size</InputLabel>
 
               <Select
-              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                 label="Scales size"
                 value={scalesText.size}
                 onChange={(e) => {
@@ -878,7 +961,7 @@ function LineGraph() {
             <FormControl>
               <InputLabel>Scales font</InputLabel>
               <Select
-              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                 label="Scales font"
                 value={scalesText.font}
                 onChange={(e) => {
@@ -895,18 +978,26 @@ function LineGraph() {
               </Select>
             </FormControl>
             <Button
-            size={document.body.clientWidth > 767 ? "medium" : "small"}
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
               variant="outlined"
               onClick={() =>
-                setScalesText({ font: "Arial", size:  document.body.clientWidth > 1300 ? 12 : document.body.clientWidth > 767
-                ?10 : 8, color: "black" })
+                setScalesText({
+                  font: "Arial",
+                  size:
+                    document.body.clientWidth > 1300
+                      ? 12
+                      : document.body.clientWidth > 767
+                      ? 10
+                      : 8,
+                  color: "black",
+                })
               }
             >
               Reset to default
             </Button>
             <p>Title</p>
             <MuiColorInput
-            size={document.body.clientWidth > 767 ? "medium" : "small"}
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
               label="Title color"
               value={titleText.color}
               onChange={(newValue) => {
@@ -918,7 +1009,7 @@ function LineGraph() {
             <FormControl>
               <InputLabel>Title size</InputLabel>
               <Select
-              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                 label="Title size"
                 value={titleText.size}
                 onChange={(e) => {
@@ -937,7 +1028,7 @@ function LineGraph() {
             <FormControl>
               <InputLabel>Title font</InputLabel>
               <Select
-              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                 label="Title font"
                 value={titleText.font}
                 onChange={(e) => {
@@ -954,12 +1045,20 @@ function LineGraph() {
               </Select>
             </FormControl>
             <Button
-            size={document.body.clientWidth > 767 ? "medium" : "small"}
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
               className="myButton"
               variant="outlined"
               onClick={() =>
-                setTitleText({ font: "Arial", size:  document.body.clientWidth > 1300 ? 32 : document.body.clientWidth > 767
-    ?24 : 18,color:"black" })
+                setTitleText({
+                  font: "Arial",
+                  size:
+                    document.body.clientWidth > 1300
+                      ? 32
+                      : document.body.clientWidth > 767
+                      ? 24
+                      : 18,
+                  color: "black",
+                })
               }
             >
               Reset to default

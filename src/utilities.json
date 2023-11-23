@@ -20,42 +20,77 @@
       "cubeColors": ["white", "pink", "magenta"],
       "css": {
         "itemColor": "rgb(255, 222, 227)",
-        "graphContaienrColor": "rgba(239, 239, 239)",
+        "graphContainerColor": "rgba(239, 239, 239)",
         "canvasContainerColor": "white",
         "containerGradient1": "pink",
-        "containerGradient2": "magenta"
+        "containerGradient2": "magenta",
+        "textColor": "black"
       },
       "themeString": "PinkAndWhiteTheme"
     },
     {
       "index": 2,
-      "name": "blue + green",
+      "name": "white + blue",
       "vectorFillColors": [
-        "rgb(173, 216, 230)",
-        "rgb(135, 206, 250)",
         "rgb(70, 130, 180)",
-        "rgb(0, 128, 128)",
-        "rgb(0, 255, 255)",
-        "rgb(32, 178, 170)",
-        "rgb(60, 179, 113)",
-        "rgb(0, 128, 0)",
-        "rgb(50, 205, 50)",
-        "rgb(0, 255, 0)",
-        "rgb(144, 238, 144)",
-        "rgb(152, 251, 152)"
+        "rgb(0, 0, 139)",
+        "rgb(0, 0, 205)",
+        "rgb(0, 0, 255)",
+        "rgb(30, 144, 255)",
+        "rgb(70, 179, 255)",
+        "rgb(135, 206, 250)",
+        "rgb(173, 216, 230)",
+        "rgb(240, 248, 255)",
+        "rgb(255, 255, 255)"
       ],
-      "cubeColors": ["blue", "green", "darkgreen"],
+      "cubeColors": ["blue", "white", "darkblue"],
       "css": {
-        "itemColor": "rgb(100, 100, 239)",
-        "graphContainerColor": "rgb(230, 230, 255)",
+        "itemColor": "rgb(220, 220, 255)",
+        "graphContainerColor": "rgb(250, 250, 255)",
         "canvasContainerColor": "white",
         "containerGradient1": "lightblue",
-        "containerGradient2": "darkblue"
+        "containerGradient2": "darkblue",
+        "textColor": "black"
       },
       "themeString": "BlueAndWhiteTheme"
+    },
+    {
+      "index": 3,
+      "name": "white + green",
+      "vectorFillColors": [
+        "rgb(0, 0, 0)",
+        "rgb(0, 128, 0)",
+        "rgb(0, 255, 0)",
+        "rgb(50, 205, 50)",
+        "rgb(60, 179, 113)",
+        "rgb(0, 128, 128)",
+        "rgb(34, 139, 34)",
+        "rgb(46, 139, 87)",
+        "rgb(0, 100, 0)",
+        "rgb(32, 178, 170)",
+        "rgb(0, 128, 128)",
+        "rgb(0, 255, 127)",
+        "rgb(0, 128, 0)",
+        "rgb(124, 252, 0)",
+        "rgb(154, 205, 50)",
+        "rgb(0, 250, 154)"
+      ],
+      "cubeColors": ["green", "white", "darkgreen"],
+      "css": {
+        "itemColor": "rgb(220, 255, 220)",
+        "graphContainerColor": "rgb(239, 239, 239)",
+        "canvasContainerColor": "white",
+        "containerGradient1": "lightgreen",
+        "containerGradient2": "darkgreen",
+        "textColor": "black"
+      },
+      "themeString": "GreenAndWhiteTheme"
     }
   ],
-  "vectorFontSizes": [6, 8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72],
+  "vectorFontSizes": [
+    6, 7, 8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 28, 32, 36, 40, 44, 48, 52,
+    56, 60, 64, 68, 72
+  ],
   "vectorFontFamily": [
     "Arial",
     "Helvetica",

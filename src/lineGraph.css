@@ -9,6 +9,7 @@
     background-color: var(--itemColor);
     grid-auto-flow: column;
 }
+
 .inputValue>* {
     min-width: 6vw;
 }
@@ -20,20 +21,24 @@
     gap: 2%;
     align-items: start;
 }
- @media only screen and (max-width: 767px) {
-.inputValue {
-    grid-template-columns: repeat(auto-fill, 17vw);
-    column-gap: 3vw;
+
+@media only screen and (max-width: 767px) {
+    .inputValue {
+        grid-template-columns: repeat(auto-fill, 17vw);
+        column-gap: 3vw;
+    }
+
+    .inputValue>* {
+        min-width: 17vw;
+    }
 }
-.inputValue>* {
-    min-width: 17vw;
-}
-} 
+
 @media only screen and (min-width: 768px) and (max-width: 1300px) {
     .inputValue {
         grid-template-columns: repeat(auto-fill, 17vw);
         column-gap: 3vw;
     }
+
     .inputValue>* {
         min-width: 17vw;
     }

@@ -13,7 +13,7 @@ import "./graph.css";
 
 function StartPage() {
   const [graphString, setgraphString] = useState(null);
-  const [graphType, setgraphType] = useState("lineGraph");
+  const [graphType, setgraphType] = useState("pieChart");
   const selectRef = useRef(null);
   return (
     <div id="wholePage">
@@ -49,11 +49,12 @@ function StartPage() {
               onClick={() => {
                 setgraphString(graphType);
                 setTimeout(() => {
-                    window.scrollTo({ top: document.body.clientHeight, behavior: 'smooth' });
+                  window.scrollTo({
+                    top: document.body.clientHeight,
+                    behavior: "smooth",
+                  });
                 }, 100);
-                
-              }
-            }
+              }}
             >
               Create new graph
             </Button>

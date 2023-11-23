@@ -1,5 +1,5 @@
-import _debounce from 'lodash/debounce';
-import { useState, useRef, useReducer ,useEffect } from "react";
+import _debounce from "lodash/debounce";
+import { useState, useRef, useReducer, useEffect } from "react";
 import { CgAddR } from "react-icons/cg";
 import { FaTrash } from "react-icons/fa";
 import { IoIosArrowDown } from "react-icons/io";
@@ -22,7 +22,7 @@ import {
   InputAdornment,
   Collapse,
   Tooltip,
-  IconButton
+  IconButton,
 } from "@mui/material";
 import { MuiColorInput } from "mui-color-input";
 
@@ -38,31 +38,62 @@ var globalMaxComposed = 185;
 var globalMinComposed = 150;
 
 function BarGraph() {
-  const handleResize = _debounce(() =>  {
-    setCanvasSizeX(document.body.clientWidth > 1300 ? document.body.clientWidth * 0.42 : document.body.clientWidth > 767 ? document.body.clientWidth * 0.8 : document.body.clientWidth * 0.9);
+  const handleResize = _debounce(() => {
+    setCanvasSizeX(
+      document.body.clientWidth > 1300
+        ? document.body.clientWidth * 0.42
+        : document.body.clientWidth > 767
+        ? document.body.clientWidth * 0.8
+        : document.body.clientWidth * 0.9
+    );
     setCanvasSizeY(document.body.clientHeight * 0.4);
     var a = fieldText;
-    a.fieldTextSize = document.body.clientWidth > 1300 ? 12 : document.body.clientWidth > 767 ? 10 : 8;
+    a.fieldTextSize =
+      document.body.clientWidth > 1300
+        ? 12
+        : document.body.clientWidth > 767
+        ? 10
+        : 8;
     setFieldText(a);
     var b = fieldTextComposed;
-    b.fieldTextSize = document.body.clientWidth > 1300 ? 12 : document.body.clientWidth > 767 ? 10 : 8;
+    b.fieldTextSize =
+      document.body.clientWidth > 1300
+        ? 12
+        : document.body.clientWidth > 767
+        ? 10
+        : 8;
     setFieldTextComposed(b);
     var c = fieldTextValue;
-    c.fieldTextSize = document.body.clientWidth > 1300 ? 12 : document.body.clientWidth > 767 ? 10 : 8;
+    c.fieldTextSize =
+      document.body.clientWidth > 1300
+        ? 12
+        : document.body.clientWidth > 767
+        ? 10
+        : 8;
     setFieldTextValue(c);
     var d = fieldTextTitle;
-    d.fieldTextSize = document.body.clientWidth > 1300 ? 32 : document.body.clientWidth > 767 ? 24 : 18;
+    d.fieldTextSize =
+      document.body.clientWidth > 1300
+        ? 32
+        : document.body.clientWidth > 767
+        ? 24
+        : 18;
     setFieldTextTitle(d);
     var e = fieldTextValueOnBar;
-    e.fieldTextSize = document.body.clientWidth > 1300 ? 12 : document.body.clientWidth > 767 ? 10 : 8;
+    e.fieldTextSize =
+      document.body.clientWidth > 1300
+        ? 12
+        : document.body.clientWidth > 767
+        ? 10
+        : 8;
     setFieldTextValueOnBar(e);
   });
 
   useEffect(() => {
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, [handleResize]);
 
@@ -70,7 +101,13 @@ function BarGraph() {
   const [colorPalette, setColorPalette] = useState(vectorColorPalettes[0]);
   const [theme, setTheme] = useState(PinkAndWhiteTheme);
 
-
+  useEffect(() => {
+    for (const key in colorPalette.css)
+      document.documentElement.style.setProperty(
+        "--" + key,
+        colorPalette.css[key]
+      );
+  });
 
   const initialComposed = [
     {
@@ -297,8 +334,16 @@ function BarGraph() {
   const [unusedMin, setUnusedMin] = useState("");
   const [unusedMax, setUnusedMax] = useState("");
 
-  const [canvasSizeX, setCanvasSizeX] = useState(document.body.clientWidth > 1300 ? document.body.clientWidth * 0.42 : document.body.clientWidth > 767 ? document.body.clientWidth * 0.8 : document.body.clientWidth * 0.9);
-  const [canvasSizeY, setCanvasSizeY] = useState(document.body.clientHeight * 0.4);
+  const [canvasSizeX, setCanvasSizeX] = useState(
+    document.body.clientWidth > 1300
+      ? document.body.clientWidth * 0.42
+      : document.body.clientWidth > 767
+      ? document.body.clientWidth * 0.8
+      : document.body.clientWidth * 0.9
+  );
+  const [canvasSizeY, setCanvasSizeY] = useState(
+    document.body.clientHeight * 0.4
+  );
   const [canvasColor, setCanvasColor] = useState("white");
   const [customBarWidth, setCustomBarWidth] = useState(0);
 
@@ -316,39 +361,62 @@ function BarGraph() {
 
   const [fieldText, setFieldText] = useState({
     fieldTextColor: "black",
-    fieldTextSize: document.body.clientWidth > 1300 ? 12 : document.body.clientWidth > 767
-    ?10 : 8,
+    fieldTextSize:
+      document.body.clientWidth > 1300
+        ? 12
+        : document.body.clientWidth > 767
+        ? 10
+        : 8,
     fieldTextFont: "Arial",
   });
   const [fieldTextComposed, setFieldTextComposed] = useState({
     fieldTextColor: "black",
-    fieldTextSize: document.body.clientWidth > 1300 ? 12 : document.body.clientWidth > 767
-    ?10 : 8,
+    fieldTextSize:
+      document.body.clientWidth > 1300
+        ? 12
+        : document.body.clientWidth > 767
+        ? 10
+        : 8,
     fieldTextFont: "Arial",
   });
   const [fieldTextValue, setFieldTextValue] = useState({
     fieldTextColor: "black",
-    fieldTextSize: document.body.clientWidth > 1300 ? 12 : document.body.clientWidth > 767
-    ?10 : 8,
+    fieldTextSize:
+      document.body.clientWidth > 1300
+        ? 12
+        : document.body.clientWidth > 767
+        ? 10
+        : 8,
     fieldTextFont: "Arial",
   });
   const [fieldTextTitle, setFieldTextTitle] = useState({
     fieldTextColor: "black",
-    fieldTextSize: document.body.clientWidth > 1300 ? 32 : document.body.clientWidth > 767
-    ?24 : 18,
+    fieldTextSize:
+      document.body.clientWidth > 1300
+        ? 32
+        : document.body.clientWidth > 767
+        ? 24
+        : 18,
     fieldTextFont: "Arial",
   });
   const [fieldTextValueOnBar, setFieldTextValueOnBar] = useState({
     fieldTextColor: "black",
-    fieldTextSize:document.body.clientWidth > 1300 ? 12 : document.body.clientWidth > 767
-    ?10 : 8,
+    fieldTextSize:
+      document.body.clientWidth > 1300
+        ? 12
+        : document.body.clientWidth > 767
+        ? 10
+        : 8,
     fieldTextFont: "Arial",
   });
   const [line, setLine] = useState({ color: "grey", size: 1 });
 
   function deleteField(ind) {
     var deletedColor = fields[ind - 1].barGraphColor;
-    colorPalette.vectorFillColors.splice(colorPalette.vectorFillColors.indexOf(deletedColor), 1);
+    colorPalette.vectorFillColors.splice(
+      colorPalette.vectorFillColors.indexOf(deletedColor),
+      1
+    );
     colorPalette.vectorFillColors.splice(fields.length, 0, deletedColor);
     fieldsDispatch({ type: "delete", payload: { deleteIndex: ind } });
   }
@@ -390,7 +458,6 @@ function BarGraph() {
         setCustomMin(Number(e.target.value));
       } else {
         setCustomMin(undefined);
-        console.log(customMin);
       }
     } else {
       if (
@@ -402,12 +469,12 @@ function BarGraph() {
     }
   }
 
-    
-    
-
   function deleteComposedField(ind) {
     var deletedColor = composed[ind].composedColor;
-    colorPalette.vectorFillColors.splice(colorPalette.vectorFillColors.indexOf(deletedColor), 1);
+    colorPalette.vectorFillColors.splice(
+      colorPalette.vectorFillColors.indexOf(deletedColor),
+      1
+    );
     colorPalette.vectorFillColors.splice(composed.length, 0, deletedColor);
     fieldsDispatch({
       type: "deleteComposed",
@@ -422,7 +489,7 @@ function BarGraph() {
         <h2>Bar graph details</h2>
         <div className="titleAndPalette">
           <TextField
-          size={document.body.clientWidth > 767 ? "medium" : "small"}
+            size={document.body.clientWidth > 767 ? "medium" : "small"}
             className="titleInput"
             label="Title"
             placeholder="Yout title here"
@@ -432,7 +499,7 @@ function BarGraph() {
           <FormControl>
             <InputLabel>Color pallette</InputLabel>
             <Select
-            size={document.body.clientWidth > 767 ? "medium" : "small"}
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
               label="colorPalette"
               value={colorPalette.name}
               onChange={(e) => {
@@ -472,7 +539,9 @@ function BarGraph() {
                     />
                     {boolCustomColors ? (
                       <MuiColorInput
-                      size={document.body.clientWidth > 767 ? "medium" : "small"}
+                        size={
+                          document.body.clientWidth > 767 ? "medium" : "small"
+                        }
                         label="bar color"
                         value={field.composedCustomColor}
                         onChange={(newValue) => {
@@ -547,7 +616,9 @@ function BarGraph() {
                 ) : (
                   composed.map((unused, composedIndex) => (
                     <TextField
-                    size={document.body.clientWidth > 767 ? "medium" : "small"}
+                      size={
+                        document.body.clientWidth > 767 ? "medium" : "small"
+                      }
                       key={unused.index}
                       value={field.barGraphArray[composedIndex]}
                       onChange={(e) =>
@@ -566,7 +637,7 @@ function BarGraph() {
                 )}
                 {boolCustomColors && !boolComposedValues ? (
                   <MuiColorInput
-                  size={document.body.clientWidth > 767 ? "medium" : "small"}
+                    size={document.body.clientWidth > 767 ? "medium" : "small"}
                     label="Bar color"
                     value={field.barGraphCustomColor}
                     onChange={(newValue) =>
@@ -582,7 +653,7 @@ function BarGraph() {
                   />
                 ) : null}
                 <FaTrash
-                className="myAdd lastItem"
+                  className="myAdd lastItem"
                   onClick={() =>
                     fields.length !== 1 ? deleteField(field.index) : null
                   }
@@ -593,14 +664,17 @@ function BarGraph() {
         </div>
         <div className="titleAndPalette">
           <div>
-            <p style={{display:"inline"}}>Add bar</p>
-            <CgAddR className="myAdd" onClick={() => fieldsDispatch({ type: "add" })} />
+            <p style={{ display: "inline" }}>Add bar</p>
+            <CgAddR
+              className="myAdd"
+              onClick={() => fieldsDispatch({ type: "add" })}
+            />
           </div>
 
           <FormControlLabel
             control={
               <Checkbox
-              className="myCheckbox"
+                className="myCheckbox"
                 checked={boolCustomColors}
                 onClick={() => {
                   setBoolCustomColors(!boolCustomColors);
@@ -615,26 +689,31 @@ function BarGraph() {
           />
           <div>
             <FormControlLabel
-            style={{margin:"0"}}
+              style={{ margin: "0" }}
               control={
                 <Checkbox
-                className="myCheckbox"
+                  className="myCheckbox"
                   checked={boolComposedValues}
                   onClick={() => setBoolComposedValues(!boolComposedValues)}
                 />
               }
               label="Grouped bar chart"
             />
-            <Tooltip title="A grouped bar graph displays multiple sets of data, with bars grouped for each category. Bars represent values, and color distinguishes datasets."
-            >
+            <Tooltip title="A grouped bar graph displays multiple sets of data, with bars grouped for each category. Bars represent values, and color distinguishes datasets.">
               <IconButton className="myInfo">
-                <InfoIcon/>
+                <InfoIcon />
               </IconButton>
             </Tooltip>
           </div>
         </div>
-        <div className="showOptions" onClick={() => setBoolDisplayOptions(!boolDisplayOptions)}>
-        <div><p style={{display:"inline"}}>Show options</p> <IoIosArrowDown className="myAdd"/></div>
+        <div
+          className="showOptions"
+          onClick={() => setBoolDisplayOptions(!boolDisplayOptions)}
+        >
+          <div>
+            <p style={{ display: "inline" }}>Show options</p>{" "}
+            <IoIosArrowDown className="myAdd" />
+          </div>
         </div>
 
         <Collapse in={boolDisplayOptions} className="optionsContainer">
@@ -642,7 +721,7 @@ function BarGraph() {
             <div className="optionSection">
               <h4>Canvas options</h4>
               <TextField
-              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                 label="Canvas width"
                 value={canvasSizeX}
                 onChange={(e) =>
@@ -658,7 +737,7 @@ function BarGraph() {
               />
 
               <TextField
-              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                 label="Canvas height"
                 value={canvasSizeY}
                 onChange={(e) =>
@@ -674,19 +753,28 @@ function BarGraph() {
               />
 
               <MuiColorInput
-              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                 label="Canvas color"
                 value={canvasColor}
-                onChange={(newValue) => {setCanvasColor(newValue);document.documentElement.style.setProperty(
-                  "--canvasContainerColor",
-                  newValue
-                );}}
+                onChange={(newValue) => {
+                  setCanvasColor(newValue);
+                  document.documentElement.style.setProperty(
+                    "--canvasContainerColor",
+                    newValue
+                  );
+                }}
               />
               <Button
-              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                 variant="outlined"
                 onClick={() => {
-                  setCanvasSizeX(document.body.clientWidth > 1300 ? document.body.clientWidth * 0.42 : document.body.clientWidth > 767 ? document.body.clientWidth * 0.8 : document.body.clientWidth * 0.9);
+                  setCanvasSizeX(
+                    document.body.clientWidth > 1300
+                      ? document.body.clientWidth * 0.42
+                      : document.body.clientWidth > 767
+                      ? document.body.clientWidth * 0.8
+                      : document.body.clientWidth * 0.9
+                  );
                   setCanvasSizeY(document.body.clientHeight * 0.4);
                 }}
               >
@@ -699,7 +787,7 @@ function BarGraph() {
               <FormControlLabel
                 control={
                   <Checkbox
-                  className="myCheckbox"
+                    className="myCheckbox"
                     checked={boolShowLines}
                     onChange={() => setBoolShowLines(!boolShowLines)}
                   />
@@ -707,7 +795,7 @@ function BarGraph() {
                 label="Show horizontal lines"
               />
               <MuiColorInput
-              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                 disabled={!boolShowLines}
                 label="Lines color"
                 value={line.color}
@@ -718,7 +806,7 @@ function BarGraph() {
                 }}
               />
               <TextField
-              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                 disabled={!boolShowLines}
                 label="Lines width"
                 value={line.size}
@@ -734,7 +822,7 @@ function BarGraph() {
                 }}
               />
               <Button
-              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                 disabled={!boolShowLines}
                 variant="outlined"
                 onClick={() => setLine({ color: "grey", size: 1 })}
@@ -745,7 +833,7 @@ function BarGraph() {
             <div className="optionSection">
               <h4>Bar options</h4>
               <TextField
-              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                 label="Custom bar width"
                 value={customBarWidth}
                 onChange={(e) => {
@@ -761,7 +849,7 @@ function BarGraph() {
               <FormControlLabel
                 control={
                   <Checkbox
-                  className="myCheckbox"
+                    className="myCheckbox"
                     checked={boolDisplayValueOnBar}
                     onChange={() =>
                       setBoolDisplayValueOnBar(!boolDisplayValueOnBar)
@@ -772,7 +860,7 @@ function BarGraph() {
               />
 
               <MuiColorInput
-              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                 disabled={!boolDisplayValueOnBar}
                 label="Bar value color"
                 value={fieldTextValueOnBar.fieldTextColor}
@@ -782,12 +870,12 @@ function BarGraph() {
                   setFieldTextValueOnBar(a);
                 }}
               />
-              
+
               <div className="bgBarFontAndSize">
                 <FormControl>
                   <InputLabel>Bar value size</InputLabel>
                   <Select
-                  size={document.body.clientWidth > 767 ? "medium" : "small"}
+                    size={document.body.clientWidth > 767 ? "medium" : "small"}
                     disabled={!boolDisplayValueOnBar}
                     label="Bar value size"
                     value={fieldTextValueOnBar.fieldTextSize}
@@ -808,7 +896,7 @@ function BarGraph() {
                 <FormControl>
                   <InputLabel>Bar value font</InputLabel>
                   <Select
-                  size={document.body.clientWidth > 767 ? "medium" : "small"}
+                    size={document.body.clientWidth > 767 ? "medium" : "small"}
                     disabled={!boolDisplayValueOnBar}
                     label="Bar value font"
                     value={fieldTextValueOnBar.fieldTextFont}
@@ -827,14 +915,18 @@ function BarGraph() {
                 </FormControl>
               </div>
               <Button
-              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                 disabled={!boolDisplayValueOnBar}
                 variant="outlined"
                 onClick={() =>
                   setFieldTextValueOnBar({
                     fieldTextColor: "black",
-                    fieldTextSize:document.body.clientWidth > 1300 ? 12 : document.body.clientWidth > 767
-                    ?10 : 8,
+                    fieldTextSize:
+                      document.body.clientWidth > 1300
+                        ? 12
+                        : document.body.clientWidth > 767
+                        ? 10
+                        : 8,
                     fieldTextFont: "Arial",
                   })
                 }
@@ -852,7 +944,7 @@ function BarGraph() {
                 </Tooltip>
               </h4>
               <TextField
-              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                 error={customMin === undefined}
                 helperText={
                   customMin === undefined
@@ -867,7 +959,7 @@ function BarGraph() {
                 onBlur={(e) => handleMin(e)}
               />
               <TextField
-              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                 error={customMax === undefined}
                 helperText={
                   customMax === undefined
@@ -882,13 +974,13 @@ function BarGraph() {
                 onBlur={(e) => handleMax(e)}
               />
               <Button
-              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                 variant="outlined"
                 onClick={() => {
                   setCustomMax(null);
                   setCustomMin(null);
-                  setUnusedMax('');
-                  setUnusedMin('');
+                  setUnusedMax("");
+                  setUnusedMin("");
                 }}
               >
                 Delete custom values
@@ -901,7 +993,7 @@ function BarGraph() {
           <div className="textOptions">
             <p>Bar names</p>
             <MuiColorInput
-            size={document.body.clientWidth > 767 ? "medium" : "small"}
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
               label="Bar name color"
               value={fieldText.fieldTextColor}
               onChange={(newValue) => {
@@ -913,7 +1005,7 @@ function BarGraph() {
             <FormControl>
               <InputLabel>Bar name size</InputLabel>
               <Select
-              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                 label="Bar name size"
                 value={fieldText.fieldTextSize}
                 onChange={(e) => {
@@ -932,7 +1024,7 @@ function BarGraph() {
             <FormControl>
               <InputLabel>Bar name font</InputLabel>
               <Select
-              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                 label="Bar name font"
                 value={fieldText.fieldTextFont}
                 onChange={(e) => {
@@ -949,13 +1041,17 @@ function BarGraph() {
               </Select>
             </FormControl>
             <Button
-            size={document.body.clientWidth > 767 ? "medium" : "small"}
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
               variant="outlined"
               onClick={() =>
                 setFieldText({
                   fieldTextColor: "black",
-                  fieldTextSize: document.body.clientWidth > 1300 ? 12 : document.body.clientWidth > 767
-                  ?10 : 8,
+                  fieldTextSize:
+                    document.body.clientWidth > 1300
+                      ? 12
+                      : document.body.clientWidth > 767
+                      ? 10
+                      : 8,
                   fieldTextFont: "Arial",
                 })
               }
@@ -964,8 +1060,8 @@ function BarGraph() {
             </Button>
             <p>Group names</p>
             <MuiColorInput
-            disabled={!boolComposedValues}
-            size={document.body.clientWidth > 767 ? "medium" : "small"}
+              disabled={!boolComposedValues}
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
               label="Group color"
               value={fieldTextComposed.fieldTextColor}
               onChange={(newValue) => {
@@ -977,8 +1073,8 @@ function BarGraph() {
             <FormControl>
               <InputLabel>Group size</InputLabel>
               <Select
-              disabled={!boolComposedValues}
-              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                disabled={!boolComposedValues}
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                 label="Group size"
                 value={fieldTextComposed.fieldTextSize}
                 onChange={(e) => {
@@ -997,8 +1093,8 @@ function BarGraph() {
             <FormControl>
               <InputLabel>Group font</InputLabel>
               <Select
-              disabled={!boolComposedValues}
-              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                disabled={!boolComposedValues}
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                 label="Group font"
                 value={fieldTextComposed.fieldTextFont}
                 onChange={(e) => {
@@ -1015,14 +1111,18 @@ function BarGraph() {
               </Select>
             </FormControl>
             <Button
-            disabled={!boolComposedValues}
-            size={document.body.clientWidth > 767 ? "medium" : "small"}
+              disabled={!boolComposedValues}
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
               variant="outlined"
               onClick={() =>
                 setFieldTextComposed({
                   fieldTextColor: "black",
-                  fieldTextSize: document.body.clientWidth > 1300 ? 12 : document.body.clientWidth > 767
-                  ?10 : 8,
+                  fieldTextSize:
+                    document.body.clientWidth > 1300
+                      ? 12
+                      : document.body.clientWidth > 767
+                      ? 10
+                      : 8,
                   fieldTextFont: "Arial",
                 })
               }
@@ -1031,7 +1131,7 @@ function BarGraph() {
             </Button>
             <p>Scales</p>
             <MuiColorInput
-            size={document.body.clientWidth > 767 ? "medium" : "small"}
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
               label="Bar value color"
               value={fieldTextValue.fieldTextColor}
               onChange={(newValue) => {
@@ -1043,7 +1143,7 @@ function BarGraph() {
             <FormControl>
               <InputLabel>Scale size</InputLabel>
               <Select
-              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                 label="Scale size"
                 value={fieldTextValue.fieldTextSize}
                 onChange={(e) => {
@@ -1062,7 +1162,7 @@ function BarGraph() {
             <FormControl>
               <InputLabel>Scale font</InputLabel>
               <Select
-              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                 label="Scale font"
                 value={fieldTextValue.fieldTextFont}
                 onChange={(e) => {
@@ -1079,13 +1179,17 @@ function BarGraph() {
               </Select>
             </FormControl>
             <Button
-            size={document.body.clientWidth > 767 ? "medium" : "small"}
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
               variant="outlined"
               onClick={() =>
                 setFieldTextValue({
                   fieldTextColor: "black",
-                  fieldTextSize: document.body.clientWidth > 1300 ? 12 : document.body.clientWidth > 767
-                  ?10 : 8,
+                  fieldTextSize:
+                    document.body.clientWidth > 1300
+                      ? 12
+                      : document.body.clientWidth > 767
+                      ? 10
+                      : 8,
                   fieldTextFont: "Arial",
                 })
               }
@@ -1094,7 +1198,7 @@ function BarGraph() {
             </Button>
             <p>Title</p>
             <MuiColorInput
-            size={document.body.clientWidth > 767 ? "medium" : "small"}
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
               label="Title color"
               value={fieldTextTitle.fieldTextColor}
               onChange={(newValue) => {
@@ -1106,7 +1210,7 @@ function BarGraph() {
             <FormControl>
               <InputLabel>Title size</InputLabel>
               <Select
-              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                 label="Title size"
                 value={fieldTextTitle.fieldTextSize}
                 onChange={(e) => {
@@ -1125,7 +1229,7 @@ function BarGraph() {
             <FormControl>
               <InputLabel>Title font</InputLabel>
               <Select
-              size={document.body.clientWidth > 767 ? "medium" : "small"}
+                size={document.body.clientWidth > 767 ? "medium" : "small"}
                 label="Title font"
                 value={fieldTextTitle.fieldTextFont}
                 onChange={(e) => {
@@ -1142,13 +1246,17 @@ function BarGraph() {
               </Select>
             </FormControl>
             <Button
-            size={document.body.clientWidth > 767 ? "medium" : "small"}
+              size={document.body.clientWidth > 767 ? "medium" : "small"}
               variant="outlined"
               onClick={() =>
                 setFieldTextTitle({
                   fieldTextColor: "black",
-                  fieldTextSize: document.body.clientWidth > 1300 ? 32 : document.body.clientWidth > 767
-                  ?24 : 18,
+                  fieldTextSize:
+                    document.body.clientWidth > 1300
+                      ? 32
+                      : document.body.clientWidth > 767
+                      ? 24
+                      : 18,
                   fieldTextFont: "Arial",
                 })
               }
